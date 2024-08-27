@@ -1,4 +1,4 @@
-                    case 2049006:
+                    case 2049006:   // 기존 코드에 저주받은 백의 주문서 10%가 없어서 추가
                     case 2049007:
                     case 2049008: {
                         /*
@@ -8,17 +8,18 @@
                             nEquip.setUpgradeSlots((byte) Math.min(nEquip.getUpgradeSlots() + 2, eqstats.get("tuc") + nEquip.getViciousHammer()));
                         }
                         */               
+                        // 위는 원본. 성공 후 업글 횟수가 감소됐을 때 최대 업글 횟수 +1이 됨
                         if (eqstats.containsKey("tuc")) {
                             int currentUpgradeSlots = nEquip.getLevel() + nEquip.getUpgradeSlots();
                             int maxUpgradeSlots = eqstats.get("tuc") + nEquip.getViciousHammer();
 
                             if (currentUpgradeSlots < maxUpgradeSlots) {
-                                // 현재 업그레이드 가능한 슬롯 수가 최대 슬롯 수보다 적다면
+                                // 현재 업그레이드 가능한 횟수가 최대 횟수보다 적다면
                                 int potentialUpgradeSlots = nEquip.getUpgradeSlots() + 2;
-                                // 실패 후 성공했을 때 최대 슬롯 수를 초과하지 않도록 함
+                                // 실패 후 성공했을 때 최대 횟수를 초과하지 않도록 함
                                 int newUpgradeSlots = Math.min(potentialUpgradeSlots, maxUpgradeSlots);
 
-                                // 만약 기존 업그레이드 가능한 슬롯 수가 실패한 경우에만 추가
+                                // 만약 기존 업그레이드 가능한 횟수가 실패한 경우에만 추가
                                 if (nEquip.getUpgradeSlots() < newUpgradeSlots) {
                                     nEquip.setUpgradeSlots((byte) newUpgradeSlots);
                                 }
