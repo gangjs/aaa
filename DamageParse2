@@ -1,0 +1,41 @@
+else if (!player.isGM() && player.getId() != 1) { // accountId 1 내 캐릭 제외
+  // 위 주석부분이 원본 아래 맥뎀 처리
+  if ((!monster.isBuffed(MonsterStatus.WEAPON_DAMAGE_REFLECT) && !monster.isBuffed(MonsterStatus.DAMAGE_IMMUNITY) && !monster.isBuffed(MonsterStatus.WEAPON_IMMUNITY))) {
+      if (eachd > maxDamagePerHit) {
+          player.getCheatTracker().registerOffense(CheatingOffense.HIGH_DAMAGE, "[Damage: " + eachd + ", Expected: " + maxDamagePerHit + ", Mob: " + monster.getId() + "] [Job: " + player.getJob() + ", Level: " + player.getLevel() + ", Skill: " + attack.skill + "]");                                                   
+         
+          if(attack.skill != 3121004) {   // 폭풍의 시 스킬 사용 아니면 데미지 변조 의심
+              World.Broadcast.broadcastGMMessage(MaplePacketCreator.serverNotice(6, "데미지감지 : " + player.getName()));
+          };
+                                          
+          // 어떤 스킬은 핵을 사용하지 않아도 핵감지가 뜨거나 핵을 사용해도 스킬에 따라 핵감지가 안뜸 사용 불가능
+          /*
+          // 계산된 데미지보다 높을 시 로그 저장아닌 오토밴 처리해버림
+         World.Broadcast.broadcastMessage(MaplePacketCreator.serverNotice(6, "[핵감지] " + player.getName() + " 님의 핵 사용을 탐지하였습니다."));
+     
+          // 폭풍의시가 자동 밴이 됨
+          String reason = "핵 사용으로 인한 밴";
+          if (player.ban(reason, true, false, true, "운영자")) {
+               World.Broadcast.broadcastMessage(MaplePacketCreator.serverNotice(6, "[밴] 핵 감지로 " + player.getName() + " 님이 밴 처리되었습니다."));
+          } 
+          */ 
+          
+          
+          if (attack.real) {
+              player.getCheatTracker().checkSameDamage(eachd, maxDamagePerHit);
+          }
+          if (eachd > maxDamagePerHit * 4) {
+              player.getCheatTracker().registerOffense(CheatingOffense.HIGH_DAMAGE_2, "[Damage: " + eachd + ", Expected: " + (maxDamagePerHit * 4) + ", Mob: " + monster.getId() + "] [Job: " + player.getJob() + ", Level: " + player.getLevel() + ", Skill: " + attack.skill + "]");
+              eachd = (int) (maxDamagePerHit * 4); // Convert to server calculated damage
+              if (eachd >= 199999 && !player.isGM()) { //ew                                         
+                  player.getClient().getSession().close();
+                  return;
+              }
+          }
+      }
+  } else {
+      if (eachd > maxDamagePerHit) {
+          eachd = (int) (maxDamagePerHit);
+      }
+  }
+  }
