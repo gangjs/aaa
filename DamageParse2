@@ -5,7 +5,7 @@ else if (!player.isGM() && player.getId() != 1) { // accountId 1 내 캐릭 제�
                                     player.getCheatTracker().registerOffense(CheatingOffense.HIGH_DAMAGE, "[Damage: " + eachd + ", Expected: " + maxDamagePerHit + ", Mob: " + monster.getId() + "] [Job: " + player.getJob() + ", Level: " + player.getLevel() + ", Skill: " + attack.skill + "]");                                                   
                                    
                                     if(attack.skill != 3121004) {   // 폭풍의 시 스킬 사용 아니면 데미지 변조 의심
-                                        World.Broadcast.broadcastGMMessage(MaplePacketCreator.serverNotice(6, "데미지감지 : " + player.getName()));
+                                        World.Broadcast.broadcastGMMessage(MaplePacketCreator.serverNotice(6, "데미지의심 : " + player.getName()));
                                     };
                                                                     
                                     // 어떤 스킬은 핵을 사용하지 않아도 핵감지가 뜨거나 핵을 사용해도 스킬에 따라 핵감지가 안뜸 사용 불가능
@@ -29,6 +29,7 @@ else if (!player.isGM() && player.getId() != 1) { // accountId 1 내 캐릭 제�
                                         // if (eachd >= 199999 && !player.isGM()) { //원본
                                         if (eachd >= 199999 && !player.isGM() && attack.skill != 3221007) { //스나이핑 맥뎀 해제   
                                             player.getClient().getSession().close();
+                                            World.Broadcast.broadcastGMMessage(MaplePacketCreator.serverNotice(6, "맥뎀제한 : " + player.getName()));
                                             return;
                                         }
                                     }
