@@ -1,3 +1,10 @@
+
+// private void dropFromMonster(final MapleCharacter chr, final MapleMonster mob, final boolean instanced) {
+   private void dropFromMonster(final MapleCharacter chr, final MapleMonster mob, final boolean instanced, int lastSkill) {
+// 매개변수 lastkill 추가
+
+//...
+
 // 마법사 광역기 사용시 드랍률 저하
                 if(lastSkill == 2321008 || lastSkill == 2221007 || lastSkill == 2121007){
                     switch (mob.getId()) {
@@ -43,3 +50,8 @@
                             chance *= 0.5;
                             break;
                     }
+                }
+
+//...
+
+};
