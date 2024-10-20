@@ -1,0 +1,19 @@
+// 도감 스크립트 메서드 추가
+function perfectCollection() {
+    var perfectVal1 = "";
+    for (var i = 0; i < books1_1.length; i++) {
+        perfectVal1 += books1[i][2] + ",";
+    }
+    var perfectVal2 = "";
+    for (var i = 0; i < books2_1.length; i++) {
+        perfectVal2 += books2[i][2] + ",";
+    }
+    var perfectVal4 = "";
+    for (var i = 0; i < booss1_1.length; i++) {
+        perfectVal4 += booss1[i][2] + ",";
+    }
+
+    cm.getPlayer().setKeyValue("books1", perfectVal1, true);//기타 수집
+    cm.getPlayer().setKeyValue("books2", perfectVal2, true);//장비 수집
+    cm.getPlayer().setKeyValue("booss1", perfectVal4, true);//보스 수집
+}
