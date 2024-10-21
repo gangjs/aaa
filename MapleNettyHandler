@@ -1,0 +1,48 @@
+@Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof IdleStateEvent) {
+            IdleStateEvent e = (IdleStateEvent) evt;
+        }
+        final String address = ctx.channel().remoteAddress().toString().split(":")[0];
+        if (this.BlockedIP.contains(address)) {
+           //  System.out.println("[알림] " + address + " 차단됨.");
+            ctx.channel().close();
+            return;
+        }
+        Pair<Long, Byte> track = this.tracker.get(address);
+        byte count;
+        if (track == null) {
+            count = 1;
+        } else {
+            count = track.right;
+            long difference = System.currentTimeMillis() - track.left;
+            if (difference < 10000L) {
+                ++count;
+            } else if (difference > 20000L) {
+                count = 1;
+            }
+            if (count >= 4) {
+                this.BlockedIP.add(address);
+                this.tracker.remove(address);
+           //     System.out.println("[알림] " + address + " 차단 등록 됨.");
+                ctx.channel().close();
+                return;
+            }
+        }
+        this.tracker.put(address, new Pair<>(System.currentTimeMillis(), count));
+        
+        MapleClient client = ctx.channel().attr(MapleClient.CLIENTKEY).get();
+        if (client != null) {
+            try {
+                client.disconnect(true, false);
+            } catch (Throwable t) {
+                //    Logger.log(LogType.ERROR, LogFile.ACCOUNT_STUCK, t);
+            } finally {
+                // ctx.close(); // 로그인 팅김 주석처리
+                // ctx.channel().attr(MapleClient.CLIENTKEY).set(null); // 로그인 팅김 주석처리
+            }
+        } else {
+            // ctx.channel().close(); // 로그인 팅김 주석처리
+            // ctx.close(); // 로그인 팅김 주석처리
+        }
+    }
