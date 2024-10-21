@@ -1,0 +1,52 @@
+public static final void UseGoldHammer(final LittleEndianAccessor slea, final MapleClient c) {
+        boolean used = false;
+
+        final byte slot = (byte) slea.readShort();
+        slea.skip(2);
+        final int itemId = slea.readInt();
+        slea.readInt(); // Inventory type, Hammered eq is always EQ.
+        Item toUse = c.getPlayer().getInventory(MapleInventoryType.USE).getItem(slot);
+        final Equip item = (Equip) c.getPlayer().getInventory(MapleInventoryType.EQUIP).getItem((byte) slea.readInt());
+        if (toUse == null || toUse.getItemId() != itemId || toUse.getQuantity() < 1) {
+            c.getSession().write(MaplePacketCreator.enableActions());
+            return;
+        }
+        if (item != null) {
+            if (GameConstants.canHammer(item.getItemId()) && MapleItemInformationProvider.getInstance().getSlots(item.getItemId()) > 0 && item.getViciousHammer() < 2) {
+                // 기존 소스와 다르게 이 안에 아이템 코드를 넣어 황금망치 정상 작동
+                switch (itemId) {
+                    case 2470000:
+                        item.setViciousHammer((byte) (item.getViciousHammer() + 1));
+                        item.setUpgradeSlots((byte) (item.getUpgradeSlots() + 1));
+                        c.getPlayer().forceReAddItem(item, MapleInventoryType.EQUIP);
+                        used = true;
+                        suc = true;
+                        break;
+                    case 2470001:
+                        if (Randomizer.nextInt(100) < 50) {
+                            item.setViciousHammer((byte) (item.getViciousHammer() + 1));
+                            item.setUpgradeSlots((byte) (item.getUpgradeSlots() + 1));
+                            c.getPlayer().forceReAddItem(item, MapleInventoryType.EQUIP);
+                            used = true;
+                            suc = true;
+                        } else {
+                            item.setViciousHammer((byte) (item.getViciousHammer() + 1));
+                            c.getPlayer().forceReAddItem(item, MapleInventoryType.EQUIP);
+                            used = true;
+                            c.getPlayer().dropMessage(5, "황금 망치 실패");
+                            suc = false;
+                        }
+                        break;
+                }
+                c.getSession().write(MTSCSPacket.ViciousHammer(true, suc));
+            } else {
+                c.getPlayer().dropMessage(5, "황금망치로 제련할 수 없는 아이템 입니다.");
+                suc = false;
+                c.getSession().write(MTSCSPacket.ViciousHammer(false, suc));
+            }
+        }
+        if (used) {
+            MapleInventoryManipulator.removeFromSlot(c, MapleInventoryType.USE, slot, (short) 1, false, true);
+        }
+        c.getSession().write(MaplePacketCreator.enableActions());
+    }
