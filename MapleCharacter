@@ -1,0 +1,24 @@
+final int MESO_ITEM = 4001211;
+final int MESO_ITEM_PRICE = 100000000; // 4001211 아이템 판매시 가격
+final int MESO_QUANTITY = 20; //
+public void gainMeso(int gain, boolean show, boolean inChat, boolean hangDisable) {
+    if (meso + gain < 0) {
+        client.getSession().write(MaplePacketCreator.enableActions());
+        return;
+    }
+    meso += gain;
+    if(meso >= 2100000000) { //21억 넘으면 자동 가가주화로 변경 메소변환
+        final boolean canHold = getInventory(GameConstants.getInventoryType(MESO_ITEM)).getNextFreeSlot() > -1;
+        if(canHold) {
+            meso -= MESO_ITEM_PRICE * MESO_QUANTITY;
+            gainItem(MESO_ITEM, (short) MESO_QUANTITY);
+            getClient().getSession().write(MaplePacketCreator.yellowChat("메소가 많아 가가 주화로 자동 교환됩니다."));
+        }
+    }
+
+    updateSingleStat(MapleStat.MESO, meso, hangDisable);
+    //client.getSession().write(MaplePacketCreator.enableActions());
+    if (show) {
+        client.getSession().write(MaplePacketCreator.showMesoGain(gain, inChat));
+    }
+}
