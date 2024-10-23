@@ -1,0 +1,14 @@
+levelup(){
+//...
+    healMaxHPMP(); // 레벨업 메서드에 healMaxHPMP() 메서드 추가
+
+}
+
+public void healMaxHPMP() {
+        Map<MapleStat, Integer> statups = new EnumMap<>(MapleStat.class);
+        stats.setHp(stats.getCurrentMaxHp(), this);
+        statups.put(MapleStat.HP, stats.getCurrentMaxHp());
+        stats.setMp(stats.getCurrentMaxMp(), this);
+        statups.put(MapleStat.MP, stats.getCurrentMaxMp());
+        client.getSession().write(MaplePacketCreator.updatePlayerStats(statups, getJob()));
+}
