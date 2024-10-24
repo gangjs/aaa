@@ -16,8 +16,8 @@ function start(mode, type, selection) {
         if (qm.getPlayer().getLevel() >= 30) {
             qm.forceStartQuest();
             qm.sendOk("당신은 30레벨이 넘는군요. 좋아요. 진실을 알려 드리죠. 잠시만 기다리세요.");
-			qm.forceCompleteQuest();
-			qm.showQuestCompleteEffect();
+//			qm.forceCompleteQuest();
+//			qm.showQuestCompleteEffect();
 			qm.dispose();
         }
         qm.dispose();
