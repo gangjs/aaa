@@ -1,0 +1,48 @@
+var status = -1;
+
+function start(mode, type, selection) {
+    if (mode == 1) {
+        status++;
+    } else {
+        if (status == 0) {
+            qm.dispose();
+            return;
+        }
+        status--;
+    }
+    if (status == 0) {
+        qm.sendAcceptDecline("버섯의 성 이야기를 어떻게 아시는지는 모르겠지만, 그곳은 아직까지 아무에게도 알려지지 않은 공간이에요. 이 사실을 감당하려면 적어도 레벨 30은 돼야 해요!");
+    } else if (status == 1) {
+        if (qm.getPlayer().getLevel() >= 30) {
+            qm.forceStartQuest();
+            qm.sendOk("당신은 30레벨이 넘는군요. 좋아요. 진실을 알려 드리죠. 잠시만 기다리세요.");
+			qm.forceCompleteQuest();
+			qm.showQuestCompleteEffect();
+			qm.dispose();
+        }
+        qm.dispose();
+    }
+}
+
+function end(mode, type, selection) {
+    if (mode == 1) {
+        status++;
+    } else {
+        if (status == 0) {
+            qm.dispose();
+            return;
+        }
+        status--;
+    }
+    if (status == 0) {
+        qm.sendYesNo("좋아요. 그렇다면 가르쳐 드리죠. 버섯의 성은 머쉬킹이 다스리는 왕국인데, 아름다운 공주가 살고 있다고 전해져요. 얼마전에...아니 아니 제가 이렇게 말씀드리는 것보다, 직접 가보는 것이 좋겠군요.");
+    } else if (status == 1) {
+        qm.sendNext("그럼 마을의 전직관을 찾아가 자세한 이야기를 물어보세요. 아참! 이제 레벨이 30이니 전직도 할 수 있겠군요!");
+    } else if (status == 2) {
+        qm.sendNextPrev("허가받지 않은 시설이긴 하지만, 아리안트 쪽의 #b카르카사#k에게 쉽게 빅토리아 마을로 돌아갈 수 있어요. 그럼 행운을 빌어요!");
+    } else if (status == 3) {
+        qm.forceCompleteQuest();
+        qm.showQuestCompleteEffect();
+        qm.dispose();
+    }
+}
