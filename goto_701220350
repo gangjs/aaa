@@ -1,10 +1,10 @@
 function enter(pi) {
+	/*
     if (pi.isQuestActive(62011) == true) {
-	//	pi.warp(701220352, 0);		
-		pi.gainItem(4034637, 1);
-		pi.playerMessage(5, "악마의 책을 발견했습니다.");
-		pi.warp(701220350, "in00");
+	pi.warp(701220352, 0);
     } else {
 	pi.warp(701220350, "in00");
     }
+	*/
+	pi.playerMessage(5, "현재 비밀의 서재의 통로는 막혀있습니다.");
 }
