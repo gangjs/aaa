@@ -1,0 +1,19 @@
+if (qm.isEligibleName(qm.getText())) {
+	    var chat = "생성 하실 #b캐릭터의 직업#k을 선택하여 주시길 바랍니다.\r\n#b";
+	    if (qm.getJob() == 1111 || qm.getJob() == 1112 || qm.getJob() == 1211 || qm.getJob() == 1212 || qm.getJob() == 1311 || qm.getJob() == 1312 || qm.getJob() == 1411 || qm.getJob() == 1412 || qm.getJob() == 1511 || qm.getJob() == 1512) {
+		chat += "\r\n#L110#파이터 (Fighter)";
+		chat += "\r\n#L120#페이지 (Page)";
+		chat += "\r\n#L130#스피어맨 (Spearman)";
+		chat += "\r\n#L210#불, 독 계열의 위자드 (Wizard)";
+		chat += "\r\n#L220#얼음, 번개 계열의 위자드 (Wizard)";
+		chat += "\r\n#L230#클레릭 (Cleric)";
+		chat += "\r\n#L310#헌터 (Hunter)";
+		chat += "\r\n#L320#사수 (Crossbowman)";
+		chat += "\r\n#L410#어쌔신 (Assasin)";
+		chat += "\r\n#L420#시프 (Theif)";
+		chat += "\r\n#L432#듀얼마스터 (DualMaster)";
+		chat += "\r\n#L510#인파이터 (Infighter)";
+		chat += "\r\n#L520#건슬링거 (Gunslinger)";
+	    }
+	    qm.sendSimple(chat);
+	}
