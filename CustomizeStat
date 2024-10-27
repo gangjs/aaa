@@ -1,0 +1,12 @@
+//올스탯 합산 시작
+int[] customizeStat = {STR, DEX, INT, LUK};
+int[] nAllStat = {stat.getStr(), stat.getDex(), stat.getInt(), stat.getLuk()};
+int limitedStat = 32767; //shrot limit value 
+MapleStat[] basicStat = {MapleStat.STR, MapleStat.DEX, MapleStat.INT, MapleStat.LUK};
+for (int i = 0; i < basicStat.length; i++) {
+    nAllStat[i] += customizeStat[i];
+    if(nAllStat[i] > limitedStat){
+        nAllStat[i] = limitedStat;
+    }
+    lBasicStat.put(basicStat[i], nAllStat[i]);
+}
