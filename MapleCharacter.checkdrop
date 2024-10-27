@@ -1,0 +1,21 @@
+if ((mob.getStats().getLevel() >= 0 && mob.getStats().getLevel() <= 120)) {//10000 1퍼
+    ranks.add(new MonsterDropEntry(0, 999999, mob.getStats().getLevel() * 5, mob.getStats().getLevel() * 7, 0));//메소
+}
+if ((mob.getStats().getLevel() >= 121 && mob.getStats().getLevel() <= 199)) {//10000 1퍼
+    ranks.add(new MonsterDropEntry(0, 999999, mob.getStats().getLevel() * 8, mob.getStats().getLevel() * 10, 0));//메소
+}
+if ((mob.getStats().getLevel() >= 200 && mob.getStats().getLevel() <= 279)) {//10000 1퍼 140 140000
+    ranks.add(new MonsterDropEntry(0, 999999, mob.getStats().getLevel() * 11, mob.getStats().getLevel() * 13, 0));//메소
+}
+if ((mob.getStats().getLevel() > 280 && mob.getStats().getLevel() <= 399)) {//10000 1퍼 140 140000
+    ranks.add(new MonsterDropEntry(0, 999999, mob.getStats().getLevel() * 14, mob.getStats().getLevel() * 16, 0));//메소
+}
+if ((mob.getStats().getLevel() >= 400 && mob.getStats().getLevel() <= 599)) {//10000 1퍼 140 140000
+    ranks.add(new MonsterDropEntry(0, 999999, mob.getStats().getLevel() * 17, mob.getStats().getLevel() * 19, 0));//메소
+}
+if ((mob.getStats().getLevel() >= 600 && mob.getStats().getLevel() <= 799)) {//10000 1퍼 140 140000
+    ranks.add(new MonsterDropEntry(0, 999999, mob.getStats().getLevel() * 20, mob.getStats().getLevel() * 21, 0));//메소
+}
+if ((mob.getStats().getLevel() >= 800 && mob.getStats().getLevel() <= 999)) {//
+    ranks.add(new MonsterDropEntry(0, 999999, mob.getStats().getLevel() * 22, mob.getStats().getLevel() * 24, 0));//메소
+}
