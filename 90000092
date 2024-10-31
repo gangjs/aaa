@@ -1,0 +1,121 @@
+﻿importPackage(Packages.server);
+importPackage(Packages.constants);
+
+var blockitems = [
+    1142263,
+    1142152,
+    1142250,
+    1142593,
+    1142249,
+    1142598,
+    1142635,
+    1143029,
+    1142703,
+    1142560,
+    1112586,
+    1112663,
+    1142283,
+    5002153,
+    5000170,
+    5002154,
+    5002155,
+    5002150,
+    5002169,
+    5002164,
+    5000315,
+    5000168,
+];
+var status = 0;
+var itemArray = [
+	5000000,
+	5000001,
+	5000002,
+	5000003,
+	5000004,
+	5000005,
+	5000006,
+	5000007,
+	5000008,
+	5000009,
+	5000010,
+	5000011,
+	5000012,
+	5000018,
+	5000020,
+	5000021,
+	5000022,
+	5000024,
+	5000026,
+	5000040,
+	5000046,
+];
+
+function action(mode, type, selection) {
+    if (mode == -1 || mode == 0) {
+        cm.dispose();
+        return;
+    }
+    if (status == 0) {
+            var message = "";
+			for(var i = 0; i < itemArray.length; i++){				
+				if (!blockCheck(itemArray[i])) {
+					message += "#L" + i + "##i" + itemArray[i] + ":# #b#t" + itemArray[i] + "#\r\n";
+				}
+			}
+            cm.sendSimple("#e분양받을 펫을 선택해주세요!#n\r\n펫 장비는 캐시검색을 이용해주세요!\r\n" + message);
+            status++;
+    } else if (status == 1) {
+        for (var i = 0; i < blockitems.length; i++) {
+            if (itemArray[selection] == blockitems[i]) {
+                cm.sendOk("#i" + itemArray[selection] + "##b#t" + itemArray[selection] + "##k은(는) 줄수 없어요.");
+                cm.dispose();
+                return;
+            }
+        }
+        if (itemArray[selection] < 100000) {
+            if (Math.floor(itemArray[selection] / 10000) == 2)
+                cm.setFace(itemArray[selection]);
+            else
+                cm.setHair(itemArray[selection]);
+            cm.dispose();
+            return;
+        }
+        if (selection < 0) {
+            cm.worldMessage(6, "[알림] " + cm.getPlayer().getName() + " 님이 아이템 복사를 시도하셨습니다. [엔피시 코드 : " + cm.getNpc() + "]");
+            cm.worldMessage(6, "[알림] 변조를 시도한 값 : " + selection + "");
+            cm.sendOk("아이템이 아닌걸요..");
+            cm.dispose();
+            return;
+        } else if (itemArray[selection] == null) {
+            cm.worldMessage(6, "[알림] " + cm.getPlayer().getName() + " 님이 아이템 복사를 시도하셨습니다. [엔피시 코드 : " + cm.getNpc() + "]");
+            cm.worldMessage(6, "[알림] 변조를 시도한 값 : " + selection + "");
+            cm.sendOk("아이템이 아닌걸요..");
+            cm.dispose();
+            return;
+        } else if (!cm.isCash(itemArray[selection])) {
+            cm.worldMessage(6, "[알림] " + cm.getPlayer().getName() + " 님이 아이템 복사를 시도하셨습니다. [엔피시 코드 : " + cm.getNpc() + "]");
+            cm.worldMessage(6, "[알림] 복사한 아이템 이름 : " + cm.getItemName(itemArray[selection]) + " (아이템 코드 : " + itemArray[selection] + ") [변조 : " + selection + "]");
+            cm.sendOk("아이템이 아닌걸요..");
+            cm.dispose();
+            return;
+        } else if (cm.canHold(itemArray[selection], 1)) {
+                cm.gainPet(itemArray[selection], "" + MapleItemInformationProvider.getInstance().getName(itemArray[selection]) + "", 1, 1, 100, 18000, 101);
+                cm.sendOk("#i" + itemArray[selection] + "##b#z" + itemArray[selection] + "##k를 분양받았습니다.");
+	//   cm.gainItem(4310029, -1);
+                cm.dispose();
+        } else {
+            cm.sendOk("인벤토리에 빈공간이 없습니다.");
+            cm.dispose();
+            return;
+        }
+    }
+}
+
+function blockCheck(itemid) {
+    for (var i = 0; i < blockitems.length; i++) {
+        if (itemid == blockitems[i]) {
+            return true;
+        }
+    }
+    return false;
+}
