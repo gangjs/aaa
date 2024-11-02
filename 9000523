@@ -1,0 +1,206 @@
+importPackage(Packages.client.inventory);
+
+var status;
+
+var typeR;
+var check;
+
+var inv;
+
+var con = -1;
+
+var blockitems = [
+    1112585,
+    5150054,
+
+
+];
+
+function getInventory(type, onlyCash) {
+    var chat = "어떤 아이템을 보관 하시겠어요 ?!\r\n\r\n";
+    var inv = cm.getInventory(type);
+    if (inv != null) {
+        var ii = Packages.server.MapleItemInformationProvider.getInstance();
+        for (var i = 0; i < inv.getSlotLimit(); i++) {
+            var item = inv.getItem(i);
+            if (item == null) continue;
+            var itemID = item.getItemId();
+            if (onlyCash && !ii.isCash(itemID)) continue;
+            chat += "#L" + i + "##i" + itemID + "# #b#z" + itemID + "##k#l\r\n";
+        }
+    }
+    return chat;
+}
+
+function start() {
+    status = -1;
+    action(1, 0, 0);
+}
+
+function action(mode, type, selection) {
+    if (mode == -1 || mode == 0) {
+        cm.dispose();
+        return;
+    } else {
+        status++;
+    }
+
+    if (status == 0) {
+        cm.getPlayer().saveToDB(false, false);
+        //cm.sendOk("현재 창고는 복사 버그로인해 막아뒀습니다. 패치 후 풀림");
+        //cm.dispose();
+        var chat = "그 어떤 창고지기 보다 안전한 보관을 책임지겠습니다 !\r\n\r\n";
+        chat += "#L1##b장비 아이템 창고 이용하기#k#l\r\n";
+        chat += "#L2##b소비 아이템 창고 이용하기#k#l\r\n";
+        chat += "#L3##b설치 아이템 창고 이용하기#k#l\r\n";
+        chat += "#L4##b기타 아이템 창고 이용하기#k#l\r\n";
+        chat += "#L5##b캐시 아이템 창고 이용하기#k#l";
+        cm.sendSimple(chat);
+    } else if (status == 1) {
+        typeR = selection;
+
+        var chat = "어떤 업무를 도와드릴까요 ?\r\n\r\n";
+
+        if (typeR == 1) {
+            chat += "#L0##b장비 아이템 보관하기#k#l\r\n";
+            chat += "#L1##b장비 아이템 회수하기#k#l";
+        } else if (typeR == 2) {
+            chat += "#L0##b소비 아이템 보관하기#k#l\r\n";
+            chat += "#L1##b소비 아이템 회수하기#k#l";
+        } else if (typeR == 3) {
+            chat += "#L0##b설치 아이템 보관하기#k#l\r\n";
+            chat += "#L1##b설치 아이템 회수하기#k#l";
+        } else if (typeR == 4) {
+            chat += "#L0##b기타 아이템 보관하기#k#l\r\n";
+            chat += "#L1##b기타 아이템 회수하기#k#l";
+        } else {
+            chat += "#L0##b캐시 아이템 보관하기#k#l\r\n";
+            chat += "#L1##b캐시 아이템 회수하기#k#l";
+        }
+
+        cm.sendSimple(chat);
+    } else if (status == 2) {
+        if (con != -1) {
+            selection = con;
+        }
+
+        var kind = (typeR == 1 ? "장비" : typeR == 2 ? "소비" : typeR == 3 ? "설치" : typeR == 4 ? "기타" : "캐시");
+
+        if (selection == 0) {
+
+            var chat = "어떤 아이템을 보관 하시겠어요 ?!\r\n\r\n";
+
+            inv = null;
+
+            switch (typeR) {
+                case 1:
+                    inv = cm.getPlayer().getInventory(MapleInventoryType.EQUIP);
+                    break;
+                case 2:
+                    inv = cm.getPlayer().getInventory(MapleInventoryType.USE);
+                    break;
+                case 3:
+                    inv = cm.getPlayer().getInventory(MapleInventoryType.SETUP);
+                    break;
+                case 4:
+                    inv = cm.getPlayer().getInventory(MapleInventoryType.ETC);
+                    break;
+                case 5:
+                    inv = cm.getPlayer().getInventory(MapleInventoryType.CASH);
+            }
+            var length = inv.getSlotLimit();
+
+            for (var i = 0; i < length; i++) {
+                var item = inv.getItem(i);
+
+                if (item != null) {
+                    var itemId = item.getItemId();
+
+                    chat += "#L" + i + "##i" + itemId + "# #b#z" + itemId + "##k#l\r\n";
+                }
+            }
+
+            if (typeR == 1) { //장비일 때
+            //chat = getInventory(typeR, true); //true = 캐시만
+            }
+
+            if (chat == "어떤 아이템을 보관 하시겠어요 ?!\r\n\r\n") {
+                var chat = "현재 보관 가능한 " + kind + "아이템이 없습니다.";
+
+                cm.sendOk(chat);
+                cm.dispose();
+            } else {
+                cm.sendSimple(chat);
+            }
+        } else {
+            check = true;
+
+            var view = cm.getPlayer().storageView(typeR);
+
+            if (view == "") {
+                var chat = "현재 보관 중인 " + kind + "아이템이 없습니다.";
+
+                cm.sendOk(chat);
+                cm.dispose();
+            } else {
+                var chat = "어떤 아이템을 회수 하시겠어요 ?\r\n\r\n";
+
+                chat += view;
+
+                cm.sendSimple(chat);
+            }
+        }
+    } else if (status == 3) {
+        if (!check) {
+            var item = inv.getItem(selection);
+            if (item == null) {
+                cm.sendOk("아이템 복사 버그가 감지되어 엔피시가 종료 됩니다.");
+                cm.dispose();
+                return;
+            }
+
+            for (var j = 0; j < blockitems.length; j++) {//아이템보관x
+                if (blockitems[j] == inv.getItem(selection).getItemId()) {
+                    cm.sendOk("#i" + inv.getItem(selection).getItemId() + "##b [#z" + inv.getItem(selection).getItemId() + "#] \r\n아이템은 창고에 보관할 수 없는 아이템입니다.");
+                    cm.dispose();
+                    return;
+                }
+            }
+            if (inv.getItem(selection).getItemId() >= 5000000 && inv.getItem(selection).getItemId() <= 5000999) { //펫 못넣게
+                cm.sendOk("#i" + inv.getItem(selection).getItemId() + "##b [#z" + inv.getItem(selection).getItemId() + "#] \r\n아이템은 창고에 보관할 수 없는 아이템입니다.");
+                cm.dispose();
+                return;
+            }
+
+            var inventoryItemId = item.getInventoryId();
+
+            cm.getPlayer().storageIn(inventoryItemId, typeR);
+            cm.getPlayer().saveToDB(false, false);
+
+            var kind = (typeR == 1 ? "장비" : typeR == 2 ? "소비" : typeR == 3 ? "설치" : typeR == 4 ? "기타" : "캐시");
+
+            cm.sendYesNo("소중한 아이템의 보관이 완료 되었습니다.\r\n다른 " + kind + "아이템을 더 보관 하시겠습니까 ?");
+
+            con = 0;
+            status = 1;
+        } else {
+            if (cm.getInvSlots(typeR) < 3) {
+                var kind = (typeR == 1 ? "장비" : typeR == 2 ? "소비" : typeR == 3 ? "설치" : typeR == 4 ? "기타" : "캐시");
+                var talk = "인벤토리 " + kind + " 슬롯을 3칸 이상 비우고 난 뒤 이용 해주시길 바랍니다.\r\n";
+                cm.sendOk(talk);
+                cm.dispose();
+                return;
+            }
+
+            cm.getPlayer().storageOut(selection);
+            cm.getPlayer().saveToDB(false, false);
+
+            var kind = (typeR == 1 ? "장비" : typeR == 2 ? "소비" : typeR == 3 ? "설치" : typeR == 4 ? "기타" : "캐시");
+
+            cm.sendYesNo("소중한 아이템의 회수가 완료 되었습니다.\r\n다른 " + kind + "아이템을 더 회수 하시겠습니까 ?");
+
+            con = 1;
+            status = 1;
+        }
+    }
+}
