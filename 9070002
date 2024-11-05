@@ -1,0 +1,80 @@
+var status = -1;
+
+var change = [
+[],
+[5062002, 2430181, 1],
+[5062000, 2430182, 1],
+[2049122, 2049100, 80], 
+[2049402, 2049401, 50], 
+[2049300, 2049301, 35], 
+[5062000, 5062002, 350],
+];
+
+
+function start() {
+    action(1, 0, 0);
+}
+
+function action(mode, type, selection) {
+    if (mode == 1) {
+        status++;
+    } else {
+        cm.dispose();
+        return;
+    }
+    switch (status) {
+        case 0: {
+            var chat = "괄호 안의 재료를 해당 아이템으로 교환해드려요!";
+
+            for (i = 1; i < change.length; i++) {		
+                chat += "\r\n#L" + i + "##i" + change[i][0] + "# #b#z" + change[i][0] + "##k";
+				if(change[i][1] == 2049100){
+					chat += "(혼돈의 주문서 " + change[i][2] + "개)";
+				} else if(change[i][1] == 2049401) {
+					chat += "(일반 잠재 " + change[i][2] + "개)";
+				} else {
+					chat += "(#t" + change[i][1] + "# " + change[i][2] + "개)";
+				}
+            }
+	
+			
+            cm.sendSimple(chat);
+            break;
+        }
+        case 1: {
+            s1 = selection;
+            var chat = "#e- 교환 아이템 : #n\r\n#i" + change[selection][0] +"# #r#z" + change[selection][0] + "# 1개#k\r\n\r\n#e- 필요 아이템 : #n";
+			chat += "\r\n#i" + change[selection][1] + "# #d#z" + change[selection][1] + "# " + change[selection][2] + "개#k";        
+
+			cm.sendGetNumber(chat + "\r\n\r\n몇 개 교환할지 입력해 주세요.\r\n교환 가능 갯수 : " + Math.floor(cm.itemQuantity(change[selection][1])/change[selection][2]), 1, 1, Math.floor(cm.itemQuantity(change[selection][1])/change[selection][2]));
+
+            break;
+        }
+        case 2: {
+			
+			if (selection < 0 || selection > Math.floor(cm.itemQuantity(change[s1][1])/change[s1][2]) || selection > 30000) {
+				cm.worldMessage(6, "[알림] " + cm.getPlayer().getName() + " 님이 아이템 복사를 시도하셨습니다. [엔피시 코드 : " + cm.getNpc() + "]");
+				cm.worldMessage(6, "[알림] 변조 시도한 값 : " + selection + "");
+				cm.dispose();
+				return;
+			}
+			
+            cm.dispose();
+
+			var quantity = selection;
+			selection = s1;    
+
+			var requiredItemAmount = change[s1][2] * quantity;
+			if (!cm.haveItem(change[s1][1], requiredItemAmount)) {
+				cm.sendNext("\r\n#d#z" + change[s1][1] + "# " + requiredItemAmount + "개#k를 소지하고 있는 지 다시 한 번 확인 해주세요!");
+				return;
+			}
+			cm.gainItem(change[s1][1], -requiredItemAmount);
+			cm.gainItem(change[s1][0], quantity);
+			
+            
+            cm.sendNext("\r\n성공적으로 교환을 완료했습니다!\r\n\r\n#i" + change[s1][0] + "# #d#z" + change[s1][0] + "# " + quantity + "개#k");
+            break;
+        }
+    }
+}
