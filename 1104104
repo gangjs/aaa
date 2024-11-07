@@ -1,0 +1,359 @@
+importPackage(java.lang);
+importPackage(Packages.database);
+importPackage(Packages.server);
+importPackage(Packages.tools.extract);
+
+var choice = 0;
+var status = -1;
+
+function getMapMonster() {
+    var say = "   드롭 정보를 보기 원하는 몬스터를 선택해 주세요.\r\n\r\n";
+    var map = cm.getPlayer().getMap();
+    var mob, mobid;
+    var a = 0;
+    var b = 0;
+    var show = false;
+    for (var it = map.getAllUniqueMonsters().iterator(); it.hasNext();) {
+        mob = it.next();
+        mobid = mob;
+        a = mobid;
+        if (a != b) {
+            show = true;
+            say += "#L" + mobid + "##o" + mobid + "# (#b몬스터코드#k : " + mobid + ")#l\r\n";
+        }
+        b = mobid;
+    }
+    if (show == true) {
+        cm.sendSimple(say);
+    } else {
+        cm.sendOk("이 맵에는 몬스터가 없거나 몬스터 드롭이 존재하지 않습니다.");
+        cm.dispose();
+        return;
+    }
+}
+
+function getAllMonsterDrop() {
+    var say = "   모든 몬스터에게 드롭되는 드롭 아이템 정보 입니다.\r\n   해당 아이템을 누르시면 해당 아이템을 드롭하는 몬스터\r\n   정보를 보실 수 있습니다.\r\n";
+    var show = false;
+    var con = null;
+    var ps = null;
+    var rs = null;
+    try {
+        con = DatabaseConnection.getConnection();
+        ps = con.prepareStatement("SELECT * FROM `drop_data_global` ORDER BY `itemid` ASC");
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            if (rs.getInt("chance") > 0) {
+				if(!MapleItemInformationProvider.getInstance().itemExists(rs.getInt("itemid"))){
+					
+				} else{
+                    if (rs.getInt("itemid") == 0) {
+                        show = true;
+                        say += "   #i4031039# : " + rs.getInt("minimum_quantity") * cm.getClient().getChannelServer().getMesoRate() + "메소 ~ " + rs.getInt("maximum_quantity") * cm.getClient().getChannelServer().getMesoRate() + "메소 " +
+                        "(" + (parseFloat(rs.getInt("chance")/10000 * cm.getClient().getChannelServer().getDropRate()) < 100 ? parseFloat(rs.getInt("chance")/10000 * cm.getClient().getChannelServer().getDropRate()) : 100) + "%)\r\n";
+                    } else if (rs.getInt("questid") == 0) {
+                        show = true;
+                        say += "#L" + rs.getInt("itemid") + "##i" + rs.getInt("itemid") + "##z" + rs.getInt("itemid") + "# " +
+                        ((rs.getInt("maximum_quantity") > 1) ? (rs.getInt("minimum_quantity") + "개 ~ " + rs.getInt("maximum_quantity") + "개 ") : "") + 
+                        "(" + (parseFloat(rs.getInt("chance")/10000 * cm.getClient().getChannelServer().getDropRate()) < 100 ? parseFloat(rs.getInt("chance")/10000 * cm.getClient().getChannelServer().getDropRate()) : 100) + "%)\r\n";
+                    }
+				}
+            }
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        if (show == true) {
+            cm.sendSimple(say);
+        } else {
+            cm.sendSimple("전체 드롭 아이템이 없습니다.");
+            status = -1;
+            //return;
+        }
+    } catch (e) {
+        cm.sendOk("오류가 발생하였습니다.\r\n\r\n" + e);
+        cm.dispose();
+        return;
+    } finally {
+        if (rs != null) {
+            rs.close();
+        }
+        if (ps != null) {
+            ps.close();
+        }
+        if (con != null) {
+            ps.close();
+        }
+    }
+}
+
+function getMonsterList(name) {
+    var say = "   " + name + "(으)로 검색하신 몬스터 목록입니다.\r\n   드롭을 보기 원하시는 몬스터를 선택해 주세요.\r\n";
+    var show = false;
+    var con = null;
+    var ps = null;
+    var rs = null;
+    try {
+        con = DatabaseConnection.getConnection();
+        ps = con.prepareStatement("SELECT * FROM `mobname` WHERE `name` LIKE '%" + name + "%' ORDER BY `id` DESC");
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            show = true;
+            say += "#L" + rs.getInt("id") + "##o" + rs.getInt("id") + "# (몬스터코드 : " + rs.getInt("id") + ")#l\r\n";
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        if (show == true) {
+            cm.sendSimple(say);
+        } else {
+            cm.sendSimple(name + "을 포함하는 몬스터의 이름이 존재하지 않습니다.");
+            status = -1;
+            //return;
+        }
+    } catch (e) {
+        cm.sendOk("오류가 발생하였습니다.\r\n\r\n" + e);
+        cm.dispose();
+        return;
+    } finally {
+        if (rs != null) {
+            rs.close();
+        }
+        if (ps != null) {
+            ps.close();
+        }
+        if (con != null) {
+            ps.close();
+        }
+    }
+}
+
+function getItemList(name) {
+    var say = "   " + name + "(으)로 검색하신 아이템 목록입니다.\r\n   해당 아이템을 누르시면 드롭하는 몬스터 정보가 나옵니다.\r\n";
+    var show = false;
+    var con = null;
+    var ps = null;
+    var rs = null;
+    try {
+        con = DatabaseConnection.getConnection();
+        ps = con.prepareStatement("SELECT * FROM `wz_itemdata` WHERE `name` LIKE '%" + name + "%' ORDER BY `itemid` ASC");
+        rs = ps.executeQuery();
+        while (rs.next()) {
+			if(!MapleItemInformationProvider.getInstance().itemExists(rs.getInt("itemid"))){
+					
+			} else{
+                show = true;
+                say += "#L" + rs.getInt("itemid") + "##i" + rs.getInt("itemid") + "##z" + rs.getInt("itemid") + "# #b(아이템코드 : " + rs.getInt("itemid") + ")#k#l\r\n";
+			}
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        if (show == true) {
+            cm.sendSimple(say);
+        } else {
+            cm.sendSimple(name + "을 포함하는 아이템의 이름이 존재하지 않습니다.");
+            status = -1;
+           // return;
+        }
+    } catch (e) {
+        cm.sendOk("오류가 발생하였습니다.\r\n\r\n" + e);
+        cm.dispose();
+        return;
+    } finally {
+        if (rs != null) {
+            rs.close();
+        }
+        if (ps != null) {
+            ps.close();
+        }
+        if (con != null) {
+            ps.close();
+        }
+    }
+}
+
+function MonsterDrop(mobid) {
+    var say = "   #o" + mobid + "# #b( 몬스터코드 : " + mobid + "  )#k \r\n\r\n   해당 아이템을 누르시면 해당 아이템을 드롭하는 몬스터\r\n   정보를 보실 수 있습니다.\r\n\r\n";
+    var show = false;
+    var a = -1;
+    var b = -1;
+    var con = null;
+    var ps = null;
+    var rs = null;
+    try {
+        con = DatabaseConnection.getConnection();
+        ps = con.prepareStatement("SELECT * FROM `drop_data` WHERE `dropperid`= " + mobid + " ORDER BY `itemid` ASC");
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            if (rs.getInt("chance") > 0) {
+				if(!MapleItemInformationProvider.getInstance().itemExists(rs.getInt("itemid"))){
+					
+				} else if(MapleDropDataParser.getMobName(mobid)==null){
+					
+				}else {
+					a = rs.getInt("itemid");
+					if (a != b) {
+                        if (rs.getInt("itemid") == 0) {
+                            show = true;
+                            say += "   #i4031039# : " + rs.getInt("minimum_quantity") * cm.getClient().getChannelServer().getMesoRate()  + "메소 ~ " + rs.getInt("maximum_quantity") * cm.getClient().getChannelServer().getMesoRate() + "메소 " +
+                            "(" + (parseFloat(rs.getInt("chance")/10000 * cm.getClient().getChannelServer().getDropRate()) < 100 ? parseFloat(rs.getInt("chance")/10000 * cm.getClient().getChannelServer().getDropRate()) : 100) + "%)\r\n";
+                        } else if (rs.getInt("questid") == 0) {
+                            show = true;
+                            say += "#L" + rs.getInt("itemid") + "##i" + rs.getInt("itemid") + "##z" + rs.getInt("itemid") + "# " +
+                            ((rs.getInt("maximum_quantity") > 1) ? (rs.getInt("minimum_quantity") + "개 ~ " + rs.getInt("maximum_quantity") + "개 ") : "") + 
+                            "(" + (parseFloat(rs.getInt("chance")/10000 * cm.getClient().getChannelServer().getDropRate()) < 100 ? parseFloat(rs.getInt("chance")/10000 * cm.getClient().getChannelServer().getDropRate()) : 100) + "%)\r\n";
+                        }
+					}
+					b = rs.getInt("itemid");
+				}
+            }
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        if (show == true) {
+            cm.sendSimple(say);
+        } else {
+            cm.sendSimple("이 몬스터가 드롭하는 아이템이 없습니다.");
+            status = -1;
+            //return;
+        }
+    } catch (e) {
+        cm.sendOk("오류가 발생하였습니다.\r\n\r\n" + e);
+        cm.dispose();
+        return;
+    } finally {
+        if (rs != null) {
+            rs.close();
+        }
+        if (ps != null) {
+            ps.close();
+        }
+        if (con != null) {
+            ps.close();
+        }
+    }
+}
+
+function ItemDrop(itemid) {
+    var say = "   #i" + itemid + "##z" + itemid + "# #b(아이템코드 : " + itemid + ")#k\r\n\r\n   해당 몬스터를 누르시면 해당 아이템을 드롭하는\r\n   몬스터 정보를 보실 수 있습니다.\r\n";
+    var show = false;
+    var a = -1;
+    var b = -1;
+    var con = null;
+    var ps = null;
+    var rs = null;
+    try {
+        con = DatabaseConnection.getConnection();
+        ps = con.prepareStatement("SELECT * FROM `drop_data` WHERE `itemid`= " + itemid + " ORDER BY `dropperid` DESC");
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            if (rs.getInt("chance") > 0) {
+				if(!MapleItemInformationProvider.getInstance().itemExists(itemid)){
+				}else if(MapleDropDataParser.getMobName(rs.getInt("dropperid"))==null){
+					
+				}else{
+					a = rs.getInt("dropperid");
+					if (a != b) { 
+                        show = true;
+          say += "#L" + rs.getInt("dropperid") + "##o" + rs.getInt("dropperid") + "# " +
+                        ((rs.getInt("maximum_quantity") > 1) ? (rs.getInt("minimum_quantity") + "개 ~ " + rs.getInt("maximum_quantity") + "개 ") : "") + 
+                        "(" + (parseFloat(rs.getInt("chance")/10000 * cm.getClient().getChannelServer().getDropRate()) < 100 ? parseFloat(rs.getInt("chance")/10000 * cm.getClient().getChannelServer().getDropRate()) : 100) + "%)\r\n";
+                    }
+					b = rs.getInt("dropperid");
+				}
+			}
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        if (show == true) {
+            cm.sendSimple(say);
+        } else {
+            cm.sendSimple("이 아이템을 드롭하는 몬스터가 없습니다.");
+            status = -1;
+            //return;
+        }
+    } catch (e) {
+        cm.sendOk("오류가 발생하였습니다.\r\n\r\n" + e);
+        cm.dispose();
+        return;
+    } finally {
+        if (rs != null) {
+            rs.close();
+        }
+        if (ps != null) {
+            ps.close();
+        }
+        if (con != null) {
+            ps.close();
+        }
+    }
+}
+
+function start() {
+    action(1, 0, 0);
+}
+
+function action(mode, type, selection) {
+    if (mode != 1) {
+        cm.dispose();
+        return;
+    }
+    if (mode == 1) {
+        status++;
+    }
+    if (status == 0) {
+        var say = " #e[드롭 테이블]#n\r\n\r\n";
+        say += "#L1##b몬스터 이름으로 검색하기#k#l\r\n";
+        say += "#L2##b드롭 아이템 이름으로 검색하기#k#l\r\n";
+        say += "#L3#전역 드롭 아이템 확인하기#l\r\n";
+        say += "#L4##b현재 맵 몬스터 검색하기#l\r\n\r\n";
+        cm.sendSimple(say);
+    } else if (status == 1) {
+        if (selection == 1) {
+            choice = 1;
+            cm.sendGetText("#e드롭을 확인 할 몬스터 이름을 검색해 주세요.\r\n#e일부 검색어는 팅김 현상#n이 발생할 수 있습니다.#b");
+        } else if (selection == 2) { //아이템 정보를 쿼리에서 불러옴
+            choice = 2;
+            cm.sendGetText("드롭을 확인 할 아이템 이름을 검색해 주세요.\r\n#e일부 검색어는 팅김 현상#n이 발생할 수 있습니다.");
+        } else if (selection == 3) {
+            choice = 2;
+            status = 2;
+            getAllMonsterDrop();
+        } else if (selection == 4) {
+            choice = 1;
+            status = 2;
+            getMapMonster();
+        } else {
+            cm.dispose();
+            return;
+        }
+    } else if (status == 2) {
+        if (choice == 1) {
+            getMonsterList(cm.getText());
+        } else if (choice == 2) {
+            getItemList(cm.getText());
+        } else {
+            cm.dispose();
+            return;
+        }
+    } else if (status == 3) {
+        if (choice == 1) {
+            choice = 2;
+            status = 2;
+            MonsterDrop(selection);
+        } else if (choice == 2) {
+            choice = 1;
+            status = 2;
+            ItemDrop(selection);
+        } else {
+            cm.dispose();
+            return;
+        }
+    } else {
+        cm.dispose();
+        return;
+    }
+}
