@@ -1,0 +1,188 @@
+public void gainExpMonster(int gain, final boolean show, final boolean white, final byte pty, boolean partyBonusMob, final int partyBonusRate) {
+        gain *= GameConstants.getExpModByLevel(level);
+        // 레벨별 리턴값 1고정 경험치 배율 서버 설정으로 변경
+        
+        // 서버 경험치 배율
+        int expwhat = 1;
+        for (ChannelServer cserv : ChannelServer.getAllInstances()) {
+            expwhat = cserv.getExpRate();
+        }
+        
+        gain *= expwhat;
+        
+        int a = 0, b = 0;
+        
+        if (getLevel() >= 120) { // 레벨 120 이상
+            gain += 2; // 배율 +2 경험치
+        }
+        
+        if (getInventory(MapleInventoryType.EQUIPPED).findById(1122017) != null) {
+             a += gain * (0.2); // 20% 보너스
+        }
+        
+        if (haveItem(3999999)) {
+            b += gain * (0.1); // 10% 보너스
+        }
+        
+        gain = gain + a + b;
+
+        int total = gain;
+        int partyinc = 0;
+        int prevexp = getExp();
+        /*if (pty > 1) {
+         final double rate = (partyBonusRate > 0 ? (partyBonusRate / 100.0) : (map == null || !partyBonusMob || map.getPartyBonusRate() <= 0 ? 0.05 : (map.getPartyBonusRate() / 100.0)));
+         partyinc = (int) (((float) (gain * rate)) * (pty + (rate > 0.05 ? -1 : 1)));
+         total += partyinc;
+         }*/
+        if (getInventory(MapleInventoryType.EQUIPPED).findById(1122215) != null) {
+            total *= 1.1; //경험치 두배증가
+            gain *= 1.1;
+        }
+
+        if (getParty() != null) { // 파티가 존재하면
+            int levels = 0;
+            boolean pass = false;
+            for (MaplePartyCharacter pChr : getParty().getMembers()) { // 파티 멤버를구한다
+                levels += pChr.getLevel(); // 
+                if (this.getClient().getChannel() == pChr.getChannel()) {
+                    // 채널이같고 플레이어들의 아이디가서로 다를때. 자신도 포함시켜버려서 애매하네.. 흐음 아니지 아직 테스트안해보기는했구나 ㄱㄱ 함해보셈. 될련가안될련가 
+                    if (pChr.isOnline() && pChr.getMapid() == this.getMapId() && pChr.getId() != this.getId()) { // 만약 파티원이 온라인이고, 맵아이디가 같고, 자신이 아니면
+                        if ((levels / getParty().getMembers().size()) <= pChr.getLevel() + 10) {
+                            //방금 110 두명있잖음 220 / 2 110 인데 조건문에 < 라서 110 초과해야 지급되게 짜있음 111하면 될듯 
+                            if ((pChr.getLevel() - (levels / getParty().getMembers().size())) <= 15) {
+                                // 플레이어 120 평균레벨 65 일 경우 120 - 65 를 해준 값이 15보다 작을 경우  보너스 지급.
+                                total += gain * 5 / 100; // 경험치를 5% 추가시킨다.
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /*        if (checkTimeExp() > 0) { // 이벤트 설정
+         //System.out.println("기본 경험치 " + total +" " + checkTimeExp() + "시간 추가 경험치 : " + (int) (total * timeexp));
+         total += (int) (total * timeexp);
+         gain += (int) (gain * timeexp);
+         }*/
+        //total *= levelExpR(); //레벨별로 경험치 곱하기
+        //gain *= levelExpR();
+        if (gain > 0 && total < gain) { //just in case
+            total = Integer.MAX_VALUE;
+        }
+        int needed = getNeededExp();
+        if (total > 0) {
+            stats.checkEquipLevels(this, total); //gms like
+        }
+        if ((level >= 200 || (GameConstants.isKOC(job) && level >= 120))) {
+            setExp(0);
+            //if (exp + total > needed) {
+            //    setExp(needed);
+            //} else {
+            //    exp += total;
+            //}
+        } else {
+            boolean leveled = false;
+            if (exp + total >= needed || exp >= needed) {
+                exp += total;
+                levelUp();
+                leveled = true;
+                if ((level >= 200 || (GameConstants.isKOC(job) && level >= 120))) {
+                    setExp(0);
+                } else {
+                    needed = getNeededExp();
+                    if (exp >= needed) {
+                        setExp(needed);
+                    }
+                }
+            } else {
+                switch (getMap().getId()) {
+                    case 300010000:
+                    case 300010100:
+                    case 300010200:
+                    case 300010300:
+                    case 300010400:
+                    case 300020000:
+                    case 300020100:
+                    case 300020200:
+                    case 300030000:
+                    case 300030100:
+                        if (getParty() != null) {
+                            if (partyMembersInMap() <= getParty().getMembers().size()) { //
+                                if ((getParty().getMembers().size() >= 2 && getParty().getMembers().size() <= 6)) {
+                                    exp += ((total) + (((total) * 0.3) * getMap().countPartyMember(getClient()) - 1));
+                                    //dropMessage(5, (total) + ((total) * 0.5) + "");
+                                } else {
+                                    exp += total;
+                                }
+                            }
+                        } else {
+                            exp += total;
+                        }
+                        break;
+                    default:
+                        exp += (total * 1);
+                        break;
+                }
+            }
+            if (total > 0) {
+                familyRep(prevexp, needed, leveled);
+            }
+        }
+        if (gain != 0) {
+            if (exp < 0) { // After adding, and negative
+                if (gain > 0) {
+                    setExp(getNeededExp());
+                } else if (gain < 0) {
+                    setExp(0);
+                }
+            }
+            updateSingleStat(MapleStat.EXP, getExp());
+            if (show) { // still show the expgain even if it's not there
+                switch (getMap().getId()) {
+                    case 300010000:
+                    case 300010100:
+                    case 300010200:
+                    case 300010300:
+                    case 300010400:
+                    case 300020000:
+                    case 300020100:
+                    case 300020200:
+                    case 300030000:
+                    case 300030100:
+                        /*
+                        if (getParty() != null) {
+                            if (partyMembersInMap() <= getParty().getMembers().size()) { //
+                                if ((getParty().getMembers().size() >= 2 && getParty().getMembers().size() <= 6)) {
+                                    //exp += ((total) + (((total) * 0.5) * getMap().countPartyMember(getClient()) - 1));
+                                    client.getSession().write(MaplePacketCreator.GainExpPacket.GainExp_Normal((int) ((total) + (((total) * 0.3) * getMap().countPartyMember(getClient()) - 1)), white, gain * 5 / 100));
+                                    //dropMessage(5, (total) + ((total) * 0.5) + "");
+                                } else {
+                                    client.getSession().write(MaplePacketCreator.GainExpPacket.GainExp_Normal(total, white, 0));
+                                }
+                            }
+                        } else {
+                            client.getSession().write(MaplePacketCreator.GainExpPacket.GainExp_Normal(total, white, 0));
+
+                        }
+                        break;
+                        */
+                    default:
+                        if (getParty() != null) {
+                            //파티 유무 체크 
+                            if (partyMembersInMap() >= 2) {
+                                if ((getParty().getMembers().size() >= 2 && getParty().getMembers().size() <= 6)) {
+                                    client.getSession().write(MaplePacketCreator.GainExpPacket.GainExp_Normal(total, white, pty * 5));
+                                } else {
+                                    client.getSession().write(MaplePacketCreator.GainExpPacket.GainExp_Normal(total, white, 0));
+                                }
+                            } else {
+                                client.getSession().write(MaplePacketCreator.GainExpPacket.GainExp_Normal(total, white, 0));
+                            }
+                        } else {
+                            client.getSession().write(MaplePacketCreator.GainExpPacket.GainExp_Normal(total, white, 0));
+                        }
+                        break;
+                }
+            }
+        }
+    }
