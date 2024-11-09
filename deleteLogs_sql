@@ -1,0 +1,3 @@
+use maplestory51;
+DELETE FROM gmlog;
+DELETE FROM iplog;
