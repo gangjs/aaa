@@ -1,0 +1,8 @@
+@echo off
+TITLE 구동
+set CLASSPATH=.;dist\*;dist\lib\*
+:gogo
+java -Xms3G -Xmx6G -Dorg.MapleStory.gateway_ip="127.0.0.1" -Dfile.encoding="UTF8" -DMapleStory.servertype="old" -server server.Start
+goto gogo
+
+:: xms xmx 자바 힙 메모리 공간. 늘리면 PC 이상해짐

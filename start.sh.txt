@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# CLASSPATH 설정
+export CLASSPATH=.:dist/*:dist/lib/*
+
+# 무한 루프 시작
+while true; do
+  java -Xms3G -Xmx6G \
+    -Dorg.MapleStory.gateway_ip="127.0.0.1" \
+    -Dfile.encoding="UTF8" \
+    -DMapleStory.servertype="old" \
+    -server server.Start
+
+  # 루프 종료 방지 (Ctrl+C로 스크립트 중단)
+done
