@@ -1,0 +1,9 @@
+public void modifyCSPoints(int type, int quantity, boolean show) {
+
+	// ....
+	if (show && quantity != 0) {
+		//dropMessage(6, quantity + (type == 1 ? " 캐시를 " : type == 3 ? "최신 캐시를 " : " 메이플 포인트를 ") + (quantity > 0 ? "획득하였습니다." : "소모하였습니다."));
+		dropMessage(6, Math.abs(quantity) + (type == 1 ? " 캐시를 " : type == 3 ? "최신 캐시를 " : " 메이플 포인트를 ") + (quantity > 0 ? "획득하였습니다." : "소모하였습니다."));
+		//client.getSession().write(MaplePacketCreator.showSpecialEffect(21));
+	}
+}
