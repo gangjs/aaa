@@ -1,0 +1,10 @@
+public static void EnterCS(MapleClient c) {
+	//NPCScriptManager.getInstance().start(c, 9000019, "OpenCS");
+	// 스크립트 부분에서 소스 오픈으로 이동
+	c.getSession().write(MaplePacketCreator.enableActions()); // 이 부분 없으면 무반응 현상, 무조건 넣어야함
+	if(c.getPlayer().getLevel() <= 10 && c.getPlayer().getJob() == 0 && !c.getPlayer().isGM()){
+		c.getPlayer().dropMessage(5, "레벨 10 미만의 초보자는 사용할 수 없습니다."); // 채팅창 빨간 메세지       
+		return;
+	}
+	CashShopEnter(c, c.getPlayer());           
+}
