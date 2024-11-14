@@ -1,0 +1,29 @@
+var enter = [17, 19, 42, 44, 46, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 97, 99, 101, 109, 111, 113, 115, 127];	
+var noenter = [22, 26, 30, 61, 65, 69, 121];
+
+//.... 
+
+if (selection == 999) {
+	var count = 0;
+	selpo = selection;
+	var asktoyou = "#i4170007# #b#t4170007##k 1개가 필요합니다.\r\n\r\n";
+	asktoyou += "#e뽑기 아이템 목록#n (전체 상품 확률 동일)\r\n";
+	asktoyou += "주문서(1개) / 포션(100개) / 기타(n개)#n \r\n\r\n";
+	for (var i = 0; i < potion.length; i++) {
+		asktoyou += "   #i" + potion[i] + ":# #b#t" + potion[i] + "##k";
+		if(noenter.indexOf(i + 1) == -1) { // length+1 noenter값일때 줄바꿈x 
+			count++;
+		}					
+		if (count % 3 == 0){ // 3줄마다 count 초기화
+			asktoyou += "\r\n";
+			count = 0;
+		}	
+		if (enter.indexOf(i + 1) !== -1) { // enter값 있으면 줄바꿈
+			asktoyou += "\r\n";
+			count = 0;
+		}
+	}
+	cm.sendYesNo(asktoyou);
+}
+
+//...
