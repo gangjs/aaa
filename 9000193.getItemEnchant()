@@ -2,6 +2,6 @@ function getItemEnchant(item) {
 	var enchant = item.getEnchant();
 	return enchant == "" ? 0 : enchant == "1강" ? 1 : enchant == "2강" ? 2 : enchant == "3강" ? 3 : enchant == "4강" ? 4 : enchant == "5강" ? 5 : enchant == "6강" ? 6 : enchant == "7강" ? 7 : enchant == "8강" ? 8 :
 	enchant == "9강" ? 9 : enchant == "10강" ? 10 : enchant == "11강" ? 11 : enchant == "12강" ? 12 : enchant == "13강" ? 13 : enchant == "14강" ? 14 : enchant == "15강" ? 15 : enchant == "16강" ? 16 : enchant == "17강" ? 17 :
-	enchant == "18강" ? 18 : enchant == "19강" ? 19 : enchant == "20강" ? 20 : enchant == "21강" ? 21 : enchant == "22" ? 22 : enchant == "23강" ? 23 : enchant == "24강" ? 24 : enchant == "25강" ? 25 : enchant == "26강" ? 26 :
+	enchant == "18강" ? 18 : enchant == "19강" ? 19 : enchant == "20강" ? 20 : enchant == "21강" ? 21 : enchant == "22강" ? 22 : enchant == "23강" ? 23 : enchant == "24강" ? 24 : enchant == "25강" ? 25 : enchant == "26강" ? 26 :
 	enchant == "27강" ? 27 : enchant == "28강" ? 28 : enchant == "29강" ? 29 : enchant == "30강" ? 31 : enchant == "31강" ? 31 :  enchant == "32강" ? 32 : enchant == "33강" ? 33 : enchant == "34강" ? 34 : enchant == "35강" ? 35 : 0;
 }
