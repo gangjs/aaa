@@ -1,0 +1,13 @@
+public final MapleMap getMap(final int mapid, final boolean respawns, final boolean npcs, final boolean reactors) {
+
+// ....
+	monsterSpawnRate = 10; // 10배
+	for (int i = 1; i <= monsterSpawnRate; i++) { //몹젠량
+		herbRocks.add(map.addMonsterSpawn(mob,
+		MapleDataTool.getInt("mobTime", life, 0),
+		(byte) MapleDataTool.getInt("team", life, -1),
+		mob.getId() == bossid ? msg : null).getPosition());
+	}
+// ...	
+	
+}	
