@@ -1,415 +1,59 @@
 private void dropFromMonster(final MapleCharacter chr, final MapleMonster mob, final boolean instanced, int lastSkill) {
-        if (mob == null || chr == null || ChannelServer.getInstance(channel) == null || dropsDisabled || mob.dropsDisabled()) { //no drops in pyramid ok? no cash either
-            return;
-        }
 
-        //We choose not to readLock for this.
-        //This will not affect the internal state, and we don't want to
-        //introduce unneccessary locking, especially since this function
-        //is probably used quite often.
-        if (!instanced && mapobjects.get(MapleMapObjectType.ITEM).size() >= 800) { // 몹 드롭갯수
-            removeDrops();
-        }
+// ...
 
-        final MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        final byte droptype = (byte) (mob.getStats().isExplosiveReward() ? 3 : mob.getStats().isFfaLoot() ? 2 : chr.getParty() != null ? 1 : 0);
+	// 마법사 광역기
+	// if(lastSkill == 2321008 || lastSkill == 2221007 || lastSkill == 2121007){ // 제네시스, 블리자드, 메테오
+	if(lastSkill == 2321008 || lastSkill == 2221007){ //  제네시스, 블리자드
+		switch (mob.getId()) {
+			case 6130101://머쉬맘
+			case 6300005://좀머
+			case 6400005://좀비머쉬맘2??
+			case 5220002://파우스트
+			case 8220003://레비아탄
+			case 6220001: // 제노
+			case 8220002://키메라
+			case 4220000://세르프
+			case 8510000: // 피아
+			case 8520000://피아
+			case 9410015://포장
+			case 9600009://포장
+			case 9600010://포장
+			case 8130100://주니어발록
+			case 5220003://타이머
+			case 3220001://데우
+			case 8220001://스노우맨
+			case 6220000: //다일
+			case 7220002://요괴고양이
+			case 7220001://구미호
+			case 2220000://마노
+			case 3220000://스텀피
+			case 5220000://킹크랑
+			case 7220000://태륜
+			case 8220000://엘리쟈
+			case 8180001: // 그리프
+			case 8180000: // 마뇽
+			case 8800022:
+			case 8500005:
+			case 8510001:
+			case 8520001:
+			case 8500002:
+			case 9400205://블루머쉬맘
+			case 8810018://혼테일
+			case 8800002://자쿰
+			case 8820001://핑크빈 
+				chance *= 1;
+				break;
+			default:
+				if(lastSkill == 2321008){
+					chance *= 0.5;
+				} else if(lastSkill == 2221007){
+					chance *= 0.7;
+				}
+				break;
+		}
+	}
+	
+// ...
 
-        int bossDropEquipManipulate = 0;
-        int bossDropSkillBookManipulate = 0;
-        int bossIgnoreEquip = 0;
-
-        /* if (mob.getId() == 8800002) {
-            //Zakum : 자쿰의투구
-            bossIgnoreEquip = 1002357; //Zakum Helmet
-            bossDropEquipManipulate = Randomizer.rand(3, 5);
-            bossDropSkillBookManipulate = Randomizer.rand(3, 6);
-        }
-        if (mob.getId() == 8810018) {
-            //1122000 : 혼테일 목걸이
-            bossIgnoreEquip = 1122000; //혼테일의 목걸이
-            bossDropEquipManipulate = Randomizer.rand(6, 9);
-            bossDropSkillBookManipulate = Randomizer.rand(6, 10);
-        }
-        if (mob.getId() == 8500002) {
-            //Pap
-            bossDropEquipManipulate = Randomizer.rand(2, 3);
-            bossDropSkillBookManipulate = Randomizer.rand(2, 3);
-        } //파풀팅 원인
-        if (mob.getId() == 8820001) {
-            //Pap
-            bossDropEquipManipulate = Randomizer.rand(9, 20);
-            bossDropSkillBookManipulate = 0;
-        }
-        if (mob.getId() == 8510000 || mob.getId() == 8520000) {
-            //Pianus 피아누스
-            bossDropEquipManipulate = Randomizer.rand(2, 3);
-            bossDropSkillBookManipulate = Randomizer.rand(2, 3);
-        }*/
-//        chr.getMap().broadcastMessage(MaplePacketCreator.serverNotice(6, "Boss Manipulate : IgnoreEquip : " + bossIgnoreEquip + " , BossEquipMax : " + bossDropEquipManipulate + " , BossSkillBookMax : " + bossDropSkillBookManipulate));
-//        System.out.println("Boss Manipulate : IgnoreEquip : " + bossIgnoreEquip + " , BossEquipMax : " + bossDropEquipManipulate + " , BossSkillBookMax : " + bossDropSkillBookManipulate);
-        final int mobpos = mob.getTruePosition().x, cmServerrate = ChannelServer.getInstance(channel).getMesoRate(), chServerrate = ChannelServer.getInstance(channel).getDropRate(), caServerrate = ChannelServer.getInstance(channel).getCashRate();
-        Item idrop;
-        byte d = 1;
-        Point pos = new Point(0, mob.getTruePosition().y);
-        double showdown = 100.0;
-        final MonsterStatusEffect mse = mob.getBuff(MonsterStatus.SHOWDOWN);
-        if (mse != null) {
-            showdown += mse.getX();
-        }
-
-        final MapleMonsterInformationProvider mi = MapleMonsterInformationProvider.getInstance();
-
-        final List<MonsterDropEntry> derp = mi.retrieveDrop(mob.getId());
-
-        final List<MonsterDropEntry> dropEntry = new ArrayList<MonsterDropEntry>();
-        if (getId() >= 925020000 && getId() <= 925033804) {
-            if (GameConstants.isMulungBoss(mob.getId())) {
-                for (int idd = 2022359; idd <= 2022421; ++idd) {
-                    dropEntry.add(new MonsterDropEntry(idd, 3000, 1, 1, 0));
-                }
-            } else {
-                for (int idd = 2022430; idd <= 2022433; ++idd) {
-                    dropEntry.add(new MonsterDropEntry(idd, 150000, 1, 1, 0));
-                }
-            }
-        } else if (derp == null) { //if no drops, no global drops either <3
-            return;
-        } else {
-            dropEntry.addAll(derp);
-        }
-        if (chr.getQuestNAdd(MapleQuest.getInstance(4545)).getCustomData() == null) {
-            chr.getQuestNAdd(MapleQuest.getInstance(4545)).setCustomData("0");
-        }
-        if (chr.getQuestNAdd(MapleQuest.getInstance(4545)).getCustomData().equals("1")) {
-            dropEntry.add(new MonsterDropEntry(4031181, 100000, 1, 1, 0));
-            dropEntry.add(new MonsterDropEntry(4031183, 100000, 1, 1, 0));
-        }
-
-        // mulung dojo  custom drop
-        Collections.shuffle(dropEntry);
-        boolean firstIterated = true;
-        boolean checkBossDrop = false;
-
-        double droprate = 1;
-        double mesorate = 1;
-/*
-        if (chr.피시방()) {
-            droprate = 1.2; //30%씩증가
-            mesorate = 1.2; // 30%씩증가 오류
-            // 밑에꺼 걍 박음?
-        }
-
-        if (chr.getInventory(MapleInventoryType.EQUIPPED).findById(1122216) != null) {
-            //droprate = 1.1; //30%씩증가
-            //mesorate = 2; // 30%씩증가 오류
-        }
-*/        
-        if (bossDropEquipManipulate > 0 || bossDropSkillBookManipulate > 0) {
-            checkBossDrop = true;
-        }
-
-//        Calendar cal = Calendar.getInstance();
-//        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-
-        /*
-         * 
-         * Custom Boss Drop Manipuator
-         * 
-         * 강제로 스킬북 또는 장비가 몇개는 뜨도록 설정한다.
-         * 일단 기본적으로 이터레이트 한번씩은 돌리도록 하고, 
-         * 자쿰이나 혼테일의 목걸이를 제외한 장비가 몇개가 뜨는지를 체크한다.
-         * 뜰때마다 1씩 값을 줄여서 
-         * 0이 될때까지 무한으로 루프를 돌린다.
-         */
-        boolean mesoDropped = false;
-        do {
-            for (final MonsterDropEntry de : dropEntry) {
-                if (de.itemId == mob.getStolen()) {
-                    continue;
-                }
-
-                int chance = (int) ((de.chance * (showdown / 100.0) * chServerrate) * droprate);
-                if (chr.getInventory(MapleInventoryType.EQUIPPED).findById(1122271) != null) {
-                    chance *= 1.2;
-                }
-                // 요일별 경험치 삭제
-                /*
-                switch (dayOfWeek) {
-                    case 1:
-                        //korDayOfWeek = "일";
-                        chance *= 1.2;
-                        break;
-                    case 2:
-                        //korDayOfWeek = "월";
-                        chance *= 1.4;
-                        break;
-                    case 3:
-                        //korDayOfWeek = "화";
-                        break;
-                    case 4:
-                        //korDayOfWeek = "수";
-                        chance *= 1.4;
-                        break;
-                    case 5:
-                        //korDayOfWeek = "목";
-                        break;
-                    case 6:
-                        //korDayOfWeek = "금";
-                        break;
-                    case 7:
-                        //korDayOfWeek = "토";
-                        chance *= 1.2;
-                        break;
-                }
-                */
-                
-                /*
-                if (chr.haveItem(3994086)) {
-                    chance *= 1.2;
-                }
-                if (chr.haveItem(3994087)) {
-                    chance *= 1.1;
-                }
-                if (chr.haveItem(3994088)) {
-                    chance *= 1.16;
-                }
-                
-                switch (mapid) {
-
-                }
-                */
-                
-                // 드랍 촛불
-                if (chr.haveItem(3994085)) {
-                    chance *= 1.2;
-                }
-                
-                // 마법사 광역기 사용시 드랍률 저하
-                if(lastSkill == 2321008 || lastSkill == 2221007 || lastSkill == 2121007){
-                    switch (mob.getId()) {
-                        case 6130101://머쉬맘
-                        case 6300005://좀머
-                        case 6400005://좀비머쉬맘2??
-                        case 5220002://파우스트
-                        case 8220003://레비아탄
-                        case 6220001: // 제노
-                        case 8220002://키메라
-                        case 4220000://세르프
-                        case 8510000: // 피아
-                        case 8520000://피아
-                        case 9410015://포장
-                        case 9600009://포장
-                        case 9600010://포장
-                        case 8130100://주니어발록
-                        case 5220003://타이머
-                        case 3220001://데우
-                        case 8220001://스노우맨
-                        case 6220000: //다일
-                        case 7220002://요괴고양이
-                        case 7220001://구미호
-                        case 2220000://마노
-                        case 3220000://스텀피
-                        case 5220000://킹크랑
-                        case 7220000://태륜
-                        case 8220000://엘리쟈
-                        case 8180001: // 그리프
-                        case 8180000: // 마뇽
-                        case 8800022:
-                        case 8500005:
-                        case 8510001:
-                        case 8520001:
-                        case 8500002:
-                        case 9400205://블루머쉬맘
-                        case 8810018://혼테일
-                        case 8800002://자쿰
-                        case 8820001://핑크빈 
-                            chance *= 1;
-                            break;
-                        default:
-                            chance *= 0.5;
-                            break;
-                    }
-                }
-                
-                switch (mob.getId()) {  // 시세조절 과한템파밍 금지
-                    case 8500002:   // 파풀라투스
-                        chance *= 0.75;
-                        break;
-                }
-                
-                switch (de.itemId) {
-                    case 2040804:   // 장공 60%
-                        chance *= 0.5;
-                        break;
-                    case 4000244:   // 드래곤의 영혼
-                        chance *= 0.8;
-                        break;
-                    case 4000245:   // 드래곤의 비늘
-                        chance *= 0.8;
-                        break;
-                    case 4020009:   // 시간 조각
-                        chance *= 0.8;
-                        break;
-                    case 2070006:   // 일비
-                        chance *= 0.8;
-                        break;
-                    case 2070005:   // 뇌전
-                        chance *= 0.8;
-                        break;
-                    case 2070007:   // 화비
-                        chance *= 0.8;
-                        break;
-                }
-                
-                if (Randomizer.rand(0, 999999) < chance) {
-                    if (mesoDropped && !(droptype == 3 || mob.getStats().isBoss()) && de.itemId == 0) { //not more than 1 sack of meso
-                        continue;
-                    }
-                    if (droptype == 3) {
-                        pos.x = (mobpos + (d % 2 == 0 ? (40 * (d + 1) / 2) : -(40 * (d / 2))));
-                    } else {
-                        pos.x = (mobpos + ((d % 2 == 0) ? (25 * (d + 1) / 2) : -(25 * (d / 2))));
-                    }
-                    if (de.itemId == 0) { // meso
-                        if (!firstIterated) { //메소는 처음 한번만 이터레이트를 돌린다.
-                            continue;
-                        }
-                        int mesos = Randomizer.rand(de.Minimum, de.Maximum);
-
-                        if (mesos > 0) {
-                            if (chr.getBuffedValue(MapleBuffStat.MESOUP) != null) {
-                                //Meso Up
-                                double rate = chr.getBuffedValue(MapleBuffStat.MESOUP) / 100.0D;
-                                mesos *= rate;
-                            }
-
-                            spawnMobMesoDrop((int) ((mesos * cmServerrate) * mesorate), calcDropPos(pos, mob.getTruePosition()), mob, chr, false, droptype);
-                            mesoDropped = true;
-                        }
-                    } else {
-                        if (checkBossDrop && !firstIterated) { //보스의 스킬북 또는 장비 최대 드롭 갯수를 체크함과 동시에 두번째 이상 이터레이팅이면
-                            if (bossDropSkillBookManipulate <= 0 && (de.itemId / 10000 == 229 || de.itemId / 10000 == 228)) { //최대 갯수를 채웠으면 브레이크.
-                                continue;
-                            }
-                            if (bossDropEquipManipulate <= 0 && de.itemId / 1000000 == 1) { //최대 갯수를 채웠으면 브레이크.
-                                continue;
-                            }
-                            if (de.itemId / 10000 != 229 && de.itemId / 10000 != 228 && de.itemId / 1000000 != 1) {
-                                continue;
-                            }
-                        }
-                        if (checkBossDrop) { //보스의 최대 아이템 갯수를 체크하는가?
-                            if (de.itemId != bossIgnoreEquip) { //체크한다면 자투와 혼목같은 아이템을 제외했는가?
-                                if (de.itemId / 1000000 == 1) {
-                                    bossDropEquipManipulate--;
-                                } else if ((de.itemId / 10000 == 229 || de.itemId / 10000 == 228)) {
-                                    bossDropSkillBookManipulate--;
-                                }
-                            } else if (!firstIterated) {
-                                continue;
-                            }
-                            if (!firstIterated) { //두번째 이상 이터레이팅일때,
-                                if (bossDropEquipManipulate <= 0 && bossDropSkillBookManipulate <= 0) {
-                                    //둘다 최대갯수만큼 채웠으면 브레이크.
-                                    checkBossDrop = false;
-                                    break;
-                                }
-                            }
-                        }
-                        if (GameConstants.getInventoryType(de.itemId) == MapleInventoryType.EQUIP) {
-                            idrop = ii.randomizeStats((Equip) ii.getEquipById(de.itemId));
-                        } else {
-                            final int range = Math.abs(de.Maximum - de.Minimum);
-                            idrop = new Item(de.itemId, (byte) 0, (short) (de.Maximum != 1 ? Randomizer.nextInt(range <= 0 ? 1 : range) + de.Minimum : 1), (byte) 0);
-                        }
-                        idrop.setGMLog("Dropped from monster " + mob.getId() + " on " + mapid);
-                        spawnMobDrop(idrop, calcDropPos(pos, mob.getTruePosition()), mob, chr, droptype, de.questid);
-                    }
-                    d++;
-                }
-            }
-            if (firstIterated) {
-                firstIterated = false;
-            }
-        } while (checkBossDrop);
-        final List<MonsterGlobalDropEntry> globalEntry = new ArrayList<MonsterGlobalDropEntry>(mi.getGlobalDrop());
-        Collections.shuffle(globalEntry);
-        final int cashz = (int) ((mob.getStats().isBoss() && mob.getStats().getHPDisplayType() == 0 ? 20 : 1) * caServerrate);
-        final int cashModifier = (int) ((mob.getStats().isBoss() ? (mob.getStats().isPartyBonus() ? (mob.getMobExp() / 1000) : 0) : (mob.getMobExp() / 1000 + mob.getMobMaxHp() / 20000))); //no rate
-
-        // Global Drops
-        for (final MonsterGlobalDropEntry de : globalEntry) {
-            if (Randomizer.nextInt(999999) < de.chance * chServerrate && (de.continent < 0 || (de.continent < 10 && mapid / 100000000 == de.continent) || (de.continent < 100 && mapid / 10000000 == de.continent) || (de.continent < 1000 && mapid / 1000000 == de.continent))) {
-
-                if (de.itemId == 0) {
-                    chr.modifyCSPoints(1, (int) ((Randomizer.nextInt(cashz) + cashz + cashModifier) * (chr.getStat().cashBuff / 100.0) * chr.getCashMod()), true);
-                } else if (!gDropsDisabled) {
-                    if (droptype == 3) {
-                        pos.x = (mobpos + (d % 2 == 0 ? (40 * (d + 1) / 2) : -(40 * (d / 2))));
-                    } else {
-                        pos.x = (mobpos + ((d % 2 == 0) ? (25 * (d + 1) / 2) : -(25 * (d / 2))));
-                    }
-                    if (GameConstants.getInventoryType(de.itemId) == MapleInventoryType.EQUIP) {
-                        idrop = ii.randomizeStats((Equip) ii.getEquipById(de.itemId));
-                    } else {
-                        idrop = new Item(de.itemId, (byte) 0, (short) (de.Maximum != 1 ? Randomizer.nextInt(de.Maximum - de.Minimum) + de.Minimum : 1), (byte) 0);
-                    }
-                    idrop.setGMLog("Dropped from monster " + mob.getId() + " on " + mapid + " (Global)");
-                    spawnMobDrop(idrop, calcDropPos(pos, mob.getTruePosition()), mob, chr, de.onlySelf ? 0 : droptype, de.questid);
-                    d++;
-                }
-            }
-        }
-
-        int flag = mob.getEventDropFlag();
-        if (flag > 0) {
-            List<Integer> eventDrops = new ArrayList<>();
-            if ((flag & 1) > 0) {
-                eventDrops.add(3010007);
-            }
-            if ((flag & 2) > 0) {
-                eventDrops.add(3010008);
-            }
-            if ((flag & 4) > 0) {
-                eventDrops.add(3010009);
-            }
-            if ((flag & 8) > 0) {
-                eventDrops.add(3010000);
-            }
-            if ((flag & 0x10) > 0) {
-                eventDrops.add(2210000);
-            }
-            if ((flag & 0x20) > 0) {
-                eventDrops.add(2210001);
-            }
-            if ((flag & 0x40) > 0) {
-                eventDrops.add(2210002);
-            }
-            if ((flag & 0x80) > 0) {
-                eventDrops.add(5370000);
-            }
-            for (int itemId : eventDrops) {
-                if (GameConstants.getInventoryType(itemId) == MapleInventoryType.EQUIP) {
-                    idrop = ii.randomizeStats((Equip) ii.getEquipById(itemId));
-                } else {
-                    idrop = new Item(itemId, (byte) 0, (short) 1, (byte) 0);
-                }
-                if (droptype == 3) {
-                    pos.x = (mobpos + (d % 2 == 0 ? (40 * (d + 1) / 2) : -(40 * (d / 2))));
-                } else {
-                    pos.x = (mobpos + ((d % 2 == 0) ? (25 * (d + 1) / 2) : -(25 * (d / 2))));
-                }
-                idrop.setGMLog("Dropped from monster " + mob.getId() + " on " + mapid + " (Event)");
-                spawnMobDrop(idrop, calcDropPos(pos, mob.getTruePosition()), mob, chr, droptype, 0);
-                d++;
-            }
-            FileoutputUtil.log("log_event_item.txt", "Found monster"
-                    + " at " + StringUtil.getCurrentTime()
-                    + " by " + chr.getName()
-                    + " monster id : " + mob.getId()
-                    + " in " + getStreetName() + " : " + getMapName()
-                    + " , flag : " + flag
-                    + "\r\n\r\n");
-        }
-
-    }
+}	
