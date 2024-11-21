@@ -1,0 +1,26 @@
+public static void saveNewCharToDB(final MapleCharacter chr, final JobType type, short db) {
+
+	//...
+	
+	ps = con.prepareStatement("INSERT INTO inventoryslot (characterid, `equip`, `use`, `setup`, `etc`, `cash`) VALUES (?, ?, ?, ?, ?, ?)");
+            ps.setInt(1, chr.id);
+            /*
+            // 인벤토리 원본
+            ps.setByte(2, (byte) 32); // Eq
+            ps.setByte(3, (byte) 32); // Use
+            ps.setByte(4, (byte) 96); // Setup
+            ps.setByte(5, (byte) 32); // ETC
+            ps.setByte(6, (byte) 96); // Cash
+            */
+            // 캐릭터 생성 시 슬롯 48칸, 캐시샵 슬롯 확장 금지
+            ps.setByte(2, (byte) 48); // Eq
+            ps.setByte(3, (byte) 48); // Use
+            ps.setByte(4, (byte) 96); // Setup
+            ps.setByte(5, (byte) 48); // ETC
+            ps.setByte(6, (byte) 96); // Cash
+            ps.execute();
+            ps.close();
+	
+	//...
+
+}
