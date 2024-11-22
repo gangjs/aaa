@@ -1,0 +1,47 @@
+public void respawn(final boolean force, final long now) {
+	lastSpawnTime = now;
+	if (force) { //cpq quick hack 
+		final int numShouldSpawn = monsterSpawn.size() - spawnedMonstersOnMap.get();
+
+		if (numShouldSpawn > 0) {
+			int spawned = 0;
+			for (Spawns spawnPoint : monsterSpawn) {
+				spawnPoint.spawnMonster(this);
+				spawned++;
+				if (spawned >= numShouldSpawn) {
+					break;
+				}
+			}
+		}
+	} else {
+		//final double numShouldSpawn = (GameConstants.isForceRespawn(mapid) ? monsterSpawn.size() : maxRegularSpawn * 1) - spawnedMonstersOnMap.get();
+		double monsterSpawnRate = 2.0; // 몹젠 2배
+		double numShouldSpawn = (GameConstants.isForceRespawn(mapid) ? monsterSpawn.size() : maxRegularSpawn * monsterSpawnRate) - spawnedMonstersOnMap.get();
+		
+		if (numShouldSpawn > 0) {
+			int spawned = 0;
+			final List<Spawns> randomSpawn = new ArrayList<Spawns>(monsterSpawn);
+			Collections.shuffle(randomSpawn);
+			for (Spawns spawnPoint : randomSpawn) {
+				if (!isSpawns && spawnPoint.getMobTime() > 0) {
+					continue;
+				}
+				try {
+					if (spawnPoint.shouldSpawn(lastSpawnTime) || GameConstants.isForceRespawn(mapid) || (monsterSpawn.size() < 10 && maxRegularSpawn * 1 > monsterSpawn.size() && partyBonusRate > 0)) {
+						spawnPoint.spawnMonster(this);
+						spawned++;
+					}
+				} catch (NullPointerException ex) {
+					FileoutputUtil.outputFileError(FileoutputUtil.ScriptEx_Log, ex);
+					//System.out.println("mapcode : " + getId() +"\n" + ex);
+				} catch (Exception ex) {
+					FileoutputUtil.log(FileoutputUtil.ScriptEx_Log, "mapcode : " + getId() + "\n" + ex);
+					//System.out.println("mapcode : " + getId() +"\n" + ex);
+				}
+				if (spawned >= numShouldSpawn) {
+					break;
+				}
+			}
+		}
+	}
+} 
