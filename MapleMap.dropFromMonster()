@@ -2,6 +2,11 @@ private void dropFromMonster(final MapleCharacter chr, final MapleMonster mob, f
 
 // ...
 
+	// 드랍 촛불 3994085 -> 3994086
+            if (chr.haveItem(3994086)) {
+                    	chance *= 1.2;
+            }
+
 	// 마법사 광역기
 	// if(lastSkill == 2321008 || lastSkill == 2221007 || lastSkill == 2121007){ // 제네시스, 블리자드, 메테오
 	if(lastSkill == 2321008 || lastSkill == 2221007){ //  제네시스, 블리자드
