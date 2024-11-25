@@ -1,0 +1,26 @@
+public static final void MovePet(final LittleEndianAccessor slea, final MapleCharacter chr) {
+	//chr.getStat().pickupRange = 350.350;//자석펫
+	
+	if (chr.getAutoStatus() == true) {
+		for (int i: GameConstants.autolootblockedMaps) {
+			if (chr.getMapId() == i) {       
+				// 오토루팅 소스
+				//chr.setAutoStatus(chr.getAutoStatus() == false);
+				chr.setAutoStatus(false);
+				chr.dropMessage(5,"[오토루팅] 보스맵에 입장하셨습니다. 자동으로 오토루팅이 비활성화됩니다.");                 
+			}
+		}
+	}
+	
+	/*
+	for (int i: GameConstants.autolootblockedMaps) {
+		if (chr.getMapId() == i) {       
+			// 보스맵 자석펫 효과 삭제
+			chr.getStat().pickupRange = 0.0;
+			chr.dropMessage(5,"[루팅] 보스맵에 입장하셨습니다. 자석펫 효과가 비활성화됩니다.");           
+		}
+	}      
+	*/
+	
+	// ...
+}
