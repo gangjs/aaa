@@ -1,0 +1,1232 @@
+var status = -1;
+var enter = "\r\n";
+var range = 0;
+
+importPackage(Packages.handling.channel.handler);
+importPackage(Packages.constants);
+importPackage(java.lang);
+importPackage(Packages.database);
+importPackage(Packages.server);
+importPackage(Packages.server.maps);
+importPackage(Packages.tools);
+
+function start() {
+    status = -1;
+    action(1, 0, 0);
+}
+
+function action(mode, type, selection) {
+    if (mode == -1) {
+        cm.dispose();
+        return;
+    }
+    if (mode == 0) {
+        cm.dispose();
+        status--;
+    }
+    if (mode == 1) {
+        // cm.dispose();
+        status++;
+    }
+    switch (status) {
+        case 0:
+            var message = "#i1112404##e#b반지#k#n를 강화하거나 반지에 대한 설명을 볼 수 있습니다.\r\n\r\n";
+			message += "#r#e반지는 복구 불가능하니 주의해주세요. 보스의 반지는 잃어버릴 시 재강화가 불가능합니다!#n\r\n\r\n";            
+            message += "#b#L2#퀘스트의 반지 설명 보기#l      ";
+			message += "#b#L8#퀘스트의 반지 강화#l\r\n";
+            message += "#b#L3#사냥꾼의 반지 설명 보기#l      ";
+			message += "#b#L9#사냥꾼의 반지 강화#l\r\n";
+			message += "#b#L4#보스의 반지 설명 보기#l         ";
+			message += "#b#L7#보스의 반지 강화#l\r\n";	
+			message += "#b#L1#초보자의 반지 설명 보기#l      ";
+			message += "#b#L11#초보자의 반지 강화#l\r\n";
+//			message += "#r#L5#반지 다시받기\r\n";
+			message += "#r#L6#보스의 반지 받기(Lv.70)#l      ";
+			message += "#r#L10#등록된 몬스터 확인#l\r\n";
+			
+			
+			
+            cm.sendSimple(message);
+            //cm.dispose();
+            break;
+        case 1:
+			sel = selection;
+            switch (selection) {
+                case 1:
+					var message = "";
+					message += "#e[초보자의 반지 설명]#n\r\n\r\n";
+                    message += "#e#b#i1112404##t1112404##n#k는 #e#r#i4001126#단풍잎 상점#k#n에서 #e#b4단계#n#k까지 강화할 수 있어요. \r\n\r\n#r자세한 내용은 단풍잎 상점을 확인해주세요!\r\n\r\n\r\n";
+
+                    cm.sendOk(message);
+                    status = -1;
+                    break;
+                case 2:
+                    var message = "";
+                    message += "#e[퀘스트의 반지 설명]#n\r\n\r\n";
+                    message += "퀘스트의 반지는 #b#e퀘스트 완료 횟수#n#k에 따라 강화할 수 있어요. ";
+                    message += "다만 #b메이플 아일랜드의 퀘스트 수행 횟수는 제외#k되며 \r\n반복 퀘스트의 경우 최초 1회 클리어만 카운트 된답니다.\r\n";
+					 message += "최종 강화를 위해서는 #e#b650개의 퀘스트를 완료#n#k해야 해요.\r\n#r#e모든 퀘스트 클리어를 목표#k#n로 해주세요!\r\n\r\n\r\n";
+
+                    cm.sendOk(message);
+                    status = -1;
+                    break;
+                case 3:
+                    var message = "";
+                    message += "#e[사냥꾼의 반지 설명]#n\r\n\r\n";
+                    message += "몬스터를 처치하면 #b일반 몬스터는 0.2%의 확률(매주 금요일 0.25%)#k, #r보스 몬스터는 1.33%의 확률#k로 주문서 성공 이펙트와 함께 #b몬스터#k가 등록됩니다.#k";
+                    message += "\r\n또한 #b#i2022338##e#z2022338##n#k이 있다면 원하는 #b일반 몬스터#k를 등록할 수 있어요. #e#b#t2022338##n#k은 낮은 확률로 몬스터에게 드랍되거나 #r#e단풍잎 상점#n#k에서 구매할 수 있답니다. ";				
+                    message += "최종 강화를 위해서는 일반 몬스터, 보스 몬스터 상관없이 \r\n#e#b330마리를 등록#n#k해야 합니다!\r\n\r\n";
+
+                    cm.sendOk(message);
+                    status = -1;
+                    break;
+				case 4:
+					var message = "";
+                    message += "#e[보스의 반지 설명]#n\r\n\r\n";
+					message += "보스의 반지는 #b#e레벨 달성, 몬스터 등록, 보스증표#n#k로 강화할 수 있어요. #r보스의 반지#k는 #b일부 보스 몬스터 등록#k으로 강화할 수 있답니다.\r\n\r\n";
+                    message += "#r보스 몬스터#k를 처치하면 #b1.33%확률#k로 #b주문서 성공 이펙트와 함께 보스 몬스터가 등록됩니다.#k";
+                    message += " 보스 몬스터는 몬스터 등록 포션을 사용할 수 없으니 유의하세요!\r\n\r\n\r\n";
+
+                    cm.sendOk(message);
+					cm.sendOk(message);
+                    status = -1;
+					break;
+				case 5:
+					if (cm.haveItem(1112402, 1) && cm.haveItem(1112403, 1) && cm.haveItem(1112404, 1)) {
+						cm.sendOk("이미 장비 인벤토리에 존재합니다.");
+					} else {						
+						if (!cm.haveItem(1112402, 1)) {
+							cm.gainItem(1112402, 1);
+						} 	
+						if (!cm.haveItem(1112403, 1)) {
+							cm.gainItem(1112403, 1);
+						}
+						if (!cm.haveItem(1112404, 1)) {
+							cm.gainItem(1112404, 1);		
+						}	
+						cm.sendOk("반지 지급 완료!\r\n지급되지 않았다면 착용 중인지 확인해주세요!");
+					}
+                    cm.dispose();
+                    return;
+					break;
+				case 6:
+					if (cm.haveItem(1112406, 1)) {
+						cm.sendOk("이미 보스의 반지를 지급 받았습니다.");
+					} else {
+						if (cm.getPlayer().getLevel() >= 70) {
+							cm.gainItem(1112406, 1);
+							cm.sendOk("보스의 반지 지급 완료!\r\n지급되지 않았다면 착용 중인지 확인해주세요!");
+						} else {
+							cm.sendOk("70레벨부터 받을 수 있습니다.");
+						}
+					}
+                    cm.dispose();
+                    return;
+					break;
+				case 7:
+					cm.dispose();
+                    cm.openNpc(1101007);
+                    break;
+				case 8:
+					if (getcompleteQuest() >= 1) {
+						getListquest();
+						//cm.sendSimple(getcompleteQuest()+"개발중 개발중아직 퀘스트를 클리어하신게 없습니다.(메이플 아일랜드 제외)");
+						//status = -1;
+					} else {
+						cm.sendOk("클리어한 퀘스트가 없습니다.(메이플 아일랜드 제외)");
+					}
+					break;		
+				case 9:
+					if (cm.getPlayer().getallQuestCustomData() >= 1) {
+						getList();
+					} else {
+						cm.sendOk("등록한 몬스터가 존재하지 않습니다.");
+					}
+					break;				
+				case 11:
+					cm.dispose();
+                    cm.openNpc(9000019);
+                    break;
+				case 10:
+					cm.getClient().getSession().write(Packages.tools.MaplePacketCreator.enableActions());
+					if (cm.getPlayerStat("LVL") < 10 && cm.getJob() == 0) {
+						cm.getPlayer().dropMessage(5, "레벨 10 미만의 초보자는 사용할 수 없습니다.");
+						cm.dispose();
+						return;
+					}
+					var message = "";
+					message += "#e#i2022338#[몬스터 등록]#n" + enter + enter;
+					message += "등록된 몬스터를 확인하실 수 있습니다.#b" + enter + enter;
+					message += "#L1#등록된 몬스터 확인" + enter;
+					message += "#r#L2#미등록 몬스터 확인" + enter;
+					message += "#b#L3#등록된 몬스터 갯수 확인#l" + enter + enter + enter;
+			//		message += "#k#i1112402##e[반지 강화]#n#b" + enter;
+			//		message += "#L4#사냥꾼의 반지 / 퀘스트의 반지 강화#n" + enter + enter;
+					cm.sendSimple(message);
+                    break;		
+				
+            }
+            break;
+		case 2:
+		
+			if (sel == 10) {			
+				if (selection == 1) {
+				range = 13;
+				showmobid();
+				} else if (selection == 2) {
+					range = 23;
+					NotCompleteQuest();
+				} else if (selection == 3) {
+					cm.sendSimple(cm.getPlayer().getallQuestCustomData() + "마리 입니다.#n");
+					status = -1;
+				}			
+			}else if (sel == 9) {
+				itemcode = 1112403;
+				item = Inv.getItem(selection);
+				var r = "선택하신 아이템은 아래와 같습니다.\r\n\r\n"
+				r += "#i" + itemcode + "##r #t" + itemcode + "#\r\n#k"
+				if (cm.getPlayer().getallQuestCustomData() >= 1 && cm.getPlayer().getallQuestCustomData() < 3) {
+					r += "#e" + cm.getPlayer().getallQuestCustomData() + "마리 몬스터를 등록하셨습니다.#n" + enter;
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +10 | 점프/이속 +1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 3 && cm.getPlayer().getallQuestCustomData() < 6) {
+					r += "#e" + cm.getPlayer().getallQuestCustomData() + "마리 몬스터를 등록하셨습니다.#n" + enter;
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +20 | 점프/이속 +3 |\r\n올스텟 +1 " + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 6 && cm.getPlayer().getallQuestCustomData() < 10) {
+					r += "#e" + cm.getPlayer().getallQuestCustomData() + "마리 몬스터를 등록하셨습니다.#n" + enter;
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +25 | 점프/이속 +4 |\r\n올스텟 +1 " + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 10 && cm.getPlayer().getallQuestCustomData() < 15) {
+					r += "#e" + cm.getPlayer().getallQuestCustomData() + "마리 몬스터를 등록하셨습니다.#n" + enter;
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +30 | 점프/이속 +4 |\r\n올스텟 +2 | HP/MP +20" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 15 && cm.getPlayer().getallQuestCustomData() < 25) {
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +35 | 점프/이속 +5 |\r\n올스텟 +2 | HP/MP +30" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 25 && cm.getPlayer().getallQuestCustomData() < 35) {
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +40 | 점프/이속 +5 |\r\n올스텟 +3 | HP/MP +40 | 회피/명중+1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 35 && cm.getPlayer().getallQuestCustomData() < 45) {
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +50 | 점프/이속 +5 |\r\n올스텟 +3 | HP/MP +100 | 회피/명중+3" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 45 && cm.getPlayer().getallQuestCustomData() < 55) {
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +60 | 점프/이속 +6 |\r\n올스텟 +4 | HP/MP +120 | 회피/명중+4" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 55 && cm.getPlayer().getallQuestCustomData() < 65) {
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +70 | 점프/이속 +6 |\r\n올스텟 +4 | HP/MP +150 | 회피/명중+5" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 65 && cm.getPlayer().getallQuestCustomData() < 80) {
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +80 | 점프/이속 +7 |\r\n올스텟 +5 | HP/MP +180 | 회피/명중+5" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 80 && cm.getPlayer().getallQuestCustomData() < 100) {
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +100 | 점프/이속 +7 |\r\n올스텟 +5 | HP/MP +230 | 회피/명중+6" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 100 && cm.getPlayer().getallQuestCustomData() < 120) {
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +110 | 점프/이속 +7 |\r\n올스텟 +5 | HP/MP +280 | 회피/명중+6" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 120 && cm.getPlayer().getallQuestCustomData() < 140) {
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +120 | 점프/이속 +7 |\r\n올스텟 +5 | HP/MP +350 | 회피/명중+7 | 공/마 +1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 140 && cm.getPlayer().getallQuestCustomData() < 160) {
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +150 | 점프/이속 +8 |\r\n올스텟 +5 | HP/MP +400 | 회피/명중+7 | 공/마 +1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 160 && cm.getPlayer().getallQuestCustomData() < 180) {
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +180 | 점프/이속 +8 |\r\n올스텟 +6 | HP/MP +420 | 회피/명중+7 | 공/마 +1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 180 && cm.getPlayer().getallQuestCustomData() < 200) {
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +190 | 점프/이속 +8 |\r\n올스텟 +6 | HP/MP +450 | 회피/명중+7 | 공/마 +1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 200 && cm.getPlayer().getallQuestCustomData() < 220) {
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +195 | 점프/이속 +8 |\r\n올스텟 +6 | HP/MP +470 | 회피/명중+8 | 공/마 +1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 220 && cm.getPlayer().getallQuestCustomData() < 250) {
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +200 | 점프/이속 +9 |\r\n올스텟 +7 | HP/MP +490 | 회피/명중+8 | 공/마 +1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 250 && cm.getPlayer().getallQuestCustomData() < 280) {
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +220 | 점프/이속 +10 |\r\n올스텟 +7 | HP/MP +500 | 회피/명중+8 | 공/마 +2" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 280 && cm.getPlayer().getallQuestCustomData() < 300) {
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +220 | 점프/이속 +10 |\r\n올스텟 +7 | HP/MP +550 | 회피/명중+8 | 공/마 +2" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 300 && cm.getPlayer().getallQuestCustomData() < 330) {
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +230 | 점프/이속 +10 |\r\n올스텟 +7 | HP/MP +650 | 회피/명중+8 | 공/마 +2" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 330 && cm.getPlayer().getallQuestCustomData() < 999) {
+					r += "#e사냥꾼의 반지를 " + enter + "물방/마방 +250 | 점프/이속 +10 |\r\n올스텟 +8 | HP/MP +700 | 회피/명중+8 | 공/마 +2" + enter + "로 강화 가능합니다.#n" + enter;
+					r += "\r\n#r#e최종 강화단계입니다.#n#k";
+				} 
+				r += "\r\n정말 강화하시겠습니까?"
+				cm.sendYesNo(r);
+			} else if (sel == 8) {
+				itemcode = 1112402;
+				item = Inv.getItem(selection);
+				var rr = "선택하신 아이템은 아래와 같습니다.\r\n\r\n"
+				rr += "#i" + itemcode + "##r #t" + itemcode + "#\r\n#k"
+				if (getcompleteQuest() >= 1 && getcompleteQuest() < 5) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +10 | 점프/이속 +1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (getcompleteQuest() >= 5 && getcompleteQuest() < 15) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +15 | 점프/이속 +1 |\r\n올스텟 +1 " + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (getcompleteQuest() >= 15 && getcompleteQuest() < 30) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +20 | 점프/이속 +2 |\r\n올스텟 +1 " + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (getcompleteQuest() >= 30 && getcompleteQuest() < 50) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +25 | 점프/이속 +2 |\r\n올스텟 +2 | HP/MP +20" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (getcompleteQuest() >= 50 && getcompleteQuest() < 75) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +30 | 점프/이속 +3 |\r\n올스텟 +2 | HP/MP +30" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (getcompleteQuest() >= 75 && getcompleteQuest() < 100) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +30 | 점프/이속 +4 |\r\n올스텟 +3 | HP/MP +30 | 명중/회피 +1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (getcompleteQuest() >= 100 && getcompleteQuest() < 130) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +40 | 점프/이속 +4 |\r\n올스텟 +3 | HP/MP +80 | 명중/회피 +3" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (getcompleteQuest() >= 130 && getcompleteQuest() < 150) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +50 | 점프/이속 +5 |\r\n올스텟 +3 | HP/MP +100 | 명중/회피 +4" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (getcompleteQuest() >= 150 && getcompleteQuest() < 199) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +60 | 점프/이속 +5 |\r\n올스텟 +3 | HP/MP +120 | 명중/회피 +5" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (getcompleteQuest() >= 200 && getcompleteQuest() < 240) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +60 | 점프/이속 +5 |\r\n올스텟 +3 | HP/MP +170 | 명중/회피 +5 | 공/마 +1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (getcompleteQuest() >= 240 && getcompleteQuest() < 265) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +90 | 점프/이속 +5 |\r\n올스텟 +3 | HP/MP +200 | 명중/회피 +6 | 공/마 +1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (getcompleteQuest() >= 265 && getcompleteQuest() < 300) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +100 | 점프/이속 +5 |\r\n올스텟 +3 | HP/MP +250 | 명중/회피 +6 | 공/마 +1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (getcompleteQuest() >= 300 && getcompleteQuest() < 340) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +120 | 점프/이속 +5 |\r\n올스텟 +4 | HP/MP +300 | 명중/회피 +7 | 공/마 +1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (getcompleteQuest() >= 340 && getcompleteQuest() < 380) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +150 | 점프/이속 +6 |\r\n올스텟 +4 | HP/MP +330 | 명중/회피 +7 | 공/마 +1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (getcompleteQuest() >= 380 && getcompleteQuest() < 440) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +180 | 점프/이속 +6 |\r\n올스텟 +4 | HP/MP +350 | 명중/회피 +7 | 공/마 +1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (getcompleteQuest() >= 440 && getcompleteQuest() < 480) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +190 | 점프/이속 +6 |\r\n올스텟 +4 | HP/MP +370 | 명중/회피 +7 | 공/마 +1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (getcompleteQuest() >= 480 && getcompleteQuest() < 560) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +200 | 점프/이속 +6 |\r\n올스텟 +5 | HP/MP +390 | 명중/회피 +7 | 공/마 +1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (getcompleteQuest() >= 560 && getcompleteQuest() < 650) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +210 | 점프/이속 +6 |\r\n올스텟 +5 | HP/MP +400 | 명중/회피 +7 | 공/마 +1" + enter + "로 강화 가능합니다.#n" + enter;
+				} else if (getcompleteQuest() >= 650 && getcompleteQuest() < 9999) {
+					rr += "#e" + getcompleteQuest() + "개의 퀘스트를 클리어 하셨습니다.#n" + enter;
+					rr += "#e퀘스트의 반지를 " + enter + "물방/마방 +220 | 점프/이속 +6 |\r\n올스텟 +5 | HP/MP +450 | 명중/회피 +7 | 공/마 +2" + enter + "로 강화 가능합니다.#n" + enter;
+					rr += "\r\n#r#e최종 강화단계입니다.#n#k";
+				}
+				rr += "\r\n정말 강화하시겠습니까?"
+				cm.sendYesNo(rr);
+			}
+			break;
+		case 3:
+			if (sel == 9) {
+				if (cm.getPlayer().getallQuestCustomData() >= 1 && cm.getPlayer().getallQuestCustomData() < 3) {
+					item.setSpeed(1);
+					item.setJump(1);
+					item.setWdef(10);
+					item.setMdef(10);
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					// FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 3 && cm.getPlayer().getallQuestCustomData() < 6) {
+					item.setSpeed(3);
+					item.setJump(3);
+					item.setWdef(20);
+					item.setMdef(20);
+					item.setStr(1);
+					item.setDex(1);
+					item.setInt(1);
+					item.setLuk(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 6 && cm.getPlayer().getallQuestCustomData() < 10) {
+					item.setSpeed(4);
+					item.setJump(4);
+					item.setWdef(25);
+					item.setMdef(25);
+					item.setStr(1);
+					item.setDex(1);
+					item.setInt(1);
+					item.setLuk(1);
+					//	FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 10 && cm.getPlayer().getallQuestCustomData() < 15) {
+					item.setSpeed(4);
+					item.setJump(4);
+					item.setWdef(30);
+					item.setMdef(30);
+					item.setStr(2);
+					item.setDex(2);
+					item.setInt(2);
+					item.setLuk(2);
+					item.setHp(20);
+					item.setMp(20);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 15 && cm.getPlayer().getallQuestCustomData() < 25) {
+					item.setSpeed(5);
+					item.setJump(5);
+					item.setWdef(35);
+					item.setMdef(35);
+					item.setStr(2);
+					item.setDex(2);
+					item.setInt(2);
+					item.setLuk(2);
+					item.setHp(30);
+					item.setMp(30);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 25 && cm.getPlayer().getallQuestCustomData() < 35) {
+					item.setSpeed(5);
+					item.setJump(5);
+					item.setWdef(40);
+					item.setMdef(40);
+					item.setStr(3);
+					item.setDex(3);
+					item.setInt(3);
+					item.setLuk(3);
+					item.setHp(40);
+					item.setMp(40);
+					item.setAvoid(1);
+					item.setAcc(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 35 && cm.getPlayer().getallQuestCustomData() < 45) {
+					item.setSpeed(5);
+					item.setJump(5);
+					item.setWdef(50);
+					item.setMdef(50);
+					item.setStr(3);
+					item.setDex(3);
+					item.setInt(3);
+					item.setLuk(3);
+					item.setHp(100);
+					item.setMp(100);
+					item.setAvoid(3);
+					item.setAcc(3);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 45 && cm.getPlayer().getallQuestCustomData() < 55) {
+					item.setSpeed(6);
+					item.setJump(6);
+					item.setWdef(60);
+					item.setMdef(60);
+					item.setStr(4);
+					item.setDex(4);
+					item.setInt(4);
+					item.setLuk(4);
+					item.setHp(120);
+					item.setMp(120);
+					item.setAvoid(4);
+					item.setAcc(4);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 55 && cm.getPlayer().getallQuestCustomData() < 65) {
+					item.setSpeed(6);
+					item.setJump(6);
+					item.setWdef(70);
+					item.setMdef(70);
+					item.setStr(4);
+					item.setDex(4);
+					item.setInt(4);
+					item.setLuk(4);
+					item.setHp(150);
+					item.setMp(150);
+					item.setAvoid(5);
+					item.setAcc(5);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 65 && cm.getPlayer().getallQuestCustomData() < 80) {
+					item.setSpeed(7);
+					item.setJump(7);
+					item.setWdef(80);
+					item.setMdef(80);
+					item.setStr(5);
+					item.setDex(5);
+					item.setInt(5);
+					item.setLuk(5);
+					item.setHp(180);
+					item.setMp(180);
+					item.setAvoid(5);
+					item.setAcc(5);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 80 && cm.getPlayer().getallQuestCustomData() < 100) {
+					item.setSpeed(7);
+					item.setJump(7);
+					item.setWdef(100);
+					item.setMdef(100);
+					item.setStr(5);
+					item.setDex(5);
+					item.setInt(5);
+					item.setLuk(5);
+					item.setHp(230);
+					item.setMp(230);
+					item.setAvoid(6);
+					item.setAcc(6);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 100 && cm.getPlayer().getallQuestCustomData() < 120) {
+					item.setSpeed(7);
+					item.setJump(7);
+					item.setWdef(110);
+					item.setMdef(110);
+					item.setStr(5);
+					item.setDex(5);
+					item.setInt(5);
+					item.setLuk(5);
+					item.setHp(280);
+					item.setMp(280);
+					item.setAvoid(6);
+					item.setAcc(6);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 120 && cm.getPlayer().getallQuestCustomData() < 140) {
+					item.setSpeed(7);
+					item.setJump(7);
+					item.setWdef(120);
+					item.setMdef(120);
+					item.setStr(5);
+					item.setDex(5);
+					item.setInt(5);
+					item.setLuk(5);
+					item.setHp(350);
+					item.setMp(350);
+					item.setAvoid(7);
+					item.setAcc(7);
+					item.setWatk(1);
+					item.setMatk(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 140 && cm.getPlayer().getallQuestCustomData() < 160) {
+					item.setSpeed(8);
+					item.setJump(8);
+					item.setWdef(150);
+					item.setMdef(150);
+					item.setStr(5);
+					item.setDex(5);
+					item.setInt(5);
+					item.setLuk(5);
+					item.setHp(400);
+					item.setMp(400);
+					item.setAvoid(7);
+					item.setAcc(7);
+					item.setWatk(1);
+					item.setMatk(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 160 && cm.getPlayer().getallQuestCustomData() < 180) {
+					item.setSpeed(8);
+					item.setJump(8);
+					item.setWdef(180);
+					item.setMdef(180);
+					item.setStr(6);
+					item.setDex(6);
+					item.setInt(6);
+					item.setLuk(6);
+					item.setHp(420);
+					item.setMp(420);
+					item.setAvoid(7);
+					item.setAcc(7);
+					item.setWatk(1);
+					item.setMatk(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 180 && cm.getPlayer().getallQuestCustomData() < 200) {
+					item.setSpeed(8);
+					item.setJump(8);
+					item.setWdef(190);
+					item.setMdef(190);
+					item.setStr(6);
+					item.setDex(6);
+					item.setInt(6);
+					item.setLuk(6);
+					item.setHp(450);
+					item.setMp(450);
+					item.setAvoid(7);
+					item.setAcc(7);
+					item.setWatk(1);
+					item.setMatk(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 200 && cm.getPlayer().getallQuestCustomData() < 220) {
+					item.setSpeed(8);
+					item.setJump(8);
+					item.setWdef(195);
+					item.setMdef(195);
+					item.setStr(6);
+					item.setDex(6);
+					item.setInt(6);
+					item.setLuk(6);
+					item.setHp(470);
+					item.setMp(470);
+					item.setAvoid(8);
+					item.setAcc(8);
+					item.setWatk(1);
+					item.setMatk(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 220 && cm.getPlayer().getallQuestCustomData() < 250) {
+					item.setSpeed(9);
+					item.setJump(9);
+					item.setWdef(200);
+					item.setMdef(200);
+					item.setStr(7);
+					item.setDex(7);
+					item.setInt(7);
+					item.setLuk(7);
+					item.setHp(490);
+					item.setMp(490);
+					item.setAvoid(8);
+					item.setAcc(8);
+					item.setWatk(1);
+					item.setMatk(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 250 && cm.getPlayer().getallQuestCustomData() < 280) {
+					item.setSpeed(10);
+					item.setJump(10);
+					item.setWdef(210);
+					item.setMdef(210);
+					item.setStr(7);
+					item.setDex(7);
+					item.setInt(7);
+					item.setLuk(7);
+					item.setHp(500);
+					item.setMp(500);
+					item.setAvoid(8);
+					item.setAcc(8);
+					item.setWatk(2);
+					item.setMatk(2);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 280 && cm.getPlayer().getallQuestCustomData() < 300) {
+					item.setSpeed(10);
+					item.setJump(10);
+					item.setWdef(220);
+					item.setMdef(220);
+					item.setStr(7);
+					item.setDex(7);
+					item.setInt(7);
+					item.setLuk(7);
+					item.setHp(550);
+					item.setMp(550);
+					item.setAvoid(8);
+					item.setAcc(8);
+					item.setWatk(2);
+					item.setMatk(2);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 300 && cm.getPlayer().getallQuestCustomData() < 330) {
+					item.setSpeed(10);
+					item.setJump(10);
+					item.setWdef(230);
+					item.setMdef(230);
+					item.setStr(7);
+					item.setDex(7);
+					item.setInt(7);
+					item.setLuk(7);
+					item.setHp(650);
+					item.setMp(650);
+					item.setAvoid(8);
+					item.setAcc(8);
+					item.setWatk(2);
+					item.setMatk(2);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (cm.getPlayer().getallQuestCustomData() >= 330 && cm.getPlayer().getallQuestCustomData() < 999) {
+					item.setSpeed(10);
+					item.setJump(10);
+					item.setWdef(250);
+					item.setMdef(250);
+					item.setStr(8);
+					item.setDex(8);
+					item.setInt(8);
+					item.setLuk(8);
+					item.setHp(700);
+					item.setMp(700);
+					item.setAvoid(8);
+					item.setAcc(8);
+					item.setWatk(2);
+					item.setMatk(2);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+cm.getPlayer().getallQuestCustomData());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} 
+			} else if (sel == 8) {
+				if (getcompleteQuest() >= 1 && getcompleteQuest() < 5) {
+					item.setSpeed(1);
+					item.setJump(1);
+					item.setWdef(10);
+					item.setMdef(10);
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (getcompleteQuest() >= 5 && getcompleteQuest() < 15) {
+					item.setSpeed(1);
+					item.setJump(1);
+					item.setWdef(15);
+					item.setMdef(15);
+					item.setStr(1);
+					item.setDex(1);
+					item.setInt(1);
+					item.setLuk(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (getcompleteQuest() >= 15 && getcompleteQuest() < 30) {
+					item.setSpeed(2);
+					item.setJump(2);
+					item.setWdef(20);
+					item.setMdef(20);
+					item.setStr(1);
+					item.setDex(1);
+					item.setInt(1);
+					item.setLuk(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (getcompleteQuest() >= 30 && getcompleteQuest() < 50) {
+					item.setSpeed(2);
+					item.setJump(2);
+					item.setWdef(25);
+					item.setMdef(25);
+					item.setStr(2);
+					item.setDex(2);
+					item.setInt(2);
+					item.setLuk(2);
+					item.setHp(20);
+					item.setMp(20);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (getcompleteQuest() >= 50 && getcompleteQuest() < 75) {
+					item.setSpeed(3);
+					item.setJump(3);
+					item.setWdef(30);
+					item.setMdef(30);
+					item.setStr(2);
+					item.setDex(2);
+					item.setInt(2);
+					item.setLuk(2);
+					item.setHp(30);
+					item.setMp(30);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (getcompleteQuest() >= 75 && getcompleteQuest() < 100) {
+					item.setSpeed(4);
+					item.setJump(4);
+					item.setWdef(30);
+					item.setMdef(30);
+					item.setStr(3);
+					item.setDex(3);
+					item.setInt(3);
+					item.setLuk(3);
+					item.setHp(30);
+					item.setMp(30);
+					item.setAvoid(1);
+					item.setAcc(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (getcompleteQuest() >= 100 && getcompleteQuest() < 130) {
+					item.setSpeed(4);
+					item.setJump(4);
+					item.setWdef(40);
+					item.setMdef(40);
+					item.setStr(3);
+					item.setDex(3);
+					item.setInt(3);
+					item.setLuk(3);
+					item.setHp(80);
+					item.setMp(80);
+					item.setAvoid(3);
+					item.setAcc(3);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (getcompleteQuest() >= 130 && getcompleteQuest() < 150) {
+					item.setSpeed(5);
+					item.setJump(5);
+					item.setWdef(50);
+					item.setMdef(50);
+					item.setStr(3);
+					item.setDex(3);
+					item.setInt(3);
+					item.setLuk(3);
+					item.setHp(100);
+					item.setMp(100);
+					item.setAvoid(4);
+					item.setAcc(4);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (getcompleteQuest() >= 150 && getcompleteQuest() < 200) {
+					item.setSpeed(5);
+					item.setJump(5);
+					item.setWdef(60);
+					item.setMdef(60);
+					item.setStr(3);
+					item.setDex(3);
+					item.setInt(3);
+					item.setLuk(3);
+					item.setHp(120);
+					item.setMp(120);
+					item.setAvoid(5);
+					item.setAcc(5);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (getcompleteQuest() >= 200 && getcompleteQuest() < 240) {
+					item.setSpeed(5);
+					item.setJump(5);
+					item.setWdef(60);
+					item.setMdef(60);
+					item.setStr(3);
+					item.setDex(3);
+					item.setInt(3);
+					item.setLuk(3);
+					item.setHp(170);
+					item.setMp(170);
+					item.setAvoid(5);
+					item.setAcc(5);
+					item.setWatk(1);
+					item.setMatk(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (getcompleteQuest() >= 240 && getcompleteQuest() < 265) {
+					item.setSpeed(5);
+					item.setJump(5);
+					item.setWdef(90);
+					item.setMdef(90);
+					item.setStr(3);
+					item.setDex(3);
+					item.setInt(3);
+					item.setLuk(3);
+					item.setHp(200);
+					item.setMp(200);
+					item.setAvoid(6);
+					item.setAcc(6);
+					item.setWatk(1);
+					item.setMatk(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (getcompleteQuest() >= 265 && getcompleteQuest() < 300) {
+					item.setSpeed(5);
+					item.setJump(5);
+					item.setWdef(100);
+					item.setMdef(100);
+					item.setStr(3);
+					item.setDex(3);
+					item.setInt(3);
+					item.setLuk(3);
+					item.setHp(250);
+					item.setMp(250);
+					item.setAvoid(6);
+					item.setAcc(6);
+					item.setWatk(1);
+					item.setMatk(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (getcompleteQuest() >= 300 && getcompleteQuest() < 340) {
+					item.setSpeed(5);
+					item.setJump(5);
+					item.setWdef(120);
+					item.setMdef(120);
+					item.setStr(4);
+					item.setDex(4);
+					item.setInt(4);
+					item.setLuk(4);
+					item.setHp(300);
+					item.setMp(300);
+					item.setAvoid(7);
+					item.setAcc(7);
+					item.setWatk(1);
+					item.setMatk(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (getcompleteQuest() >= 340 && getcompleteQuest() < 380) {
+					item.setSpeed(6);
+					item.setJump(6);
+					item.setWdef(150);
+					item.setMdef(150);
+					item.setStr(4);
+					item.setDex(4);
+					item.setInt(4);
+					item.setLuk(4);
+					item.setHp(330);
+					item.setMp(330);
+					item.setAvoid(7);
+					item.setAcc(7);
+					item.setWatk(1);
+					item.setMatk(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (getcompleteQuest() >= 380 && getcompleteQuest() < 440) {
+					item.setSpeed(6);
+					item.setJump(6);
+					item.setWdef(180);
+					item.setMdef(180);
+					item.setStr(4);
+					item.setDex(4);
+					item.setInt(4);
+					item.setLuk(4);
+					item.setHp(350);
+					item.setMp(350);
+					item.setAvoid(7);
+					item.setAcc(7);
+					item.setWatk(1);
+					item.setMatk(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (getcompleteQuest() >= 440 && getcompleteQuest() < 480) {
+					item.setSpeed(6);
+					item.setJump(6);
+					item.setWdef(190);
+					item.setMdef(190);
+					item.setStr(4);
+					item.setDex(4);
+					item.setInt(4);
+					item.setLuk(4);
+					item.setHp(370);
+					item.setMp(370);
+					item.setAvoid(7);
+					item.setAcc(7);
+					item.setWatk(1);
+					item.setMatk(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (getcompleteQuest() >= 480 && getcompleteQuest() < 560) {
+					item.setSpeed(6);
+					item.setJump(6);
+					item.setWdef(200);
+					item.setMdef(200);
+					item.setStr(5);
+					item.setDex(5);
+					item.setInt(5);
+					item.setLuk(5);
+					item.setHp(390);
+					item.setMp(390);
+					item.setAvoid(7);
+					item.setAcc(7);
+					item.setWatk(1);
+					item.setMatk(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (getcompleteQuest() >= 560 && getcompleteQuest() < 650) {
+					item.setSpeed(6);
+					item.setJump(6);
+					item.setWdef(210);
+					item.setMdef(210);
+					item.setStr(5);
+					item.setDex(5);
+					item.setInt(5);
+					item.setLuk(5);
+					item.setHp(400);
+					item.setMp(400);
+					item.setAvoid(7);
+					item.setAcc(7);
+					item.setWatk(1);
+					item.setMatk(1);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				} else if (getcompleteQuest() >= 650 && getcompleteQuest() < 9999) {
+					item.setSpeed(6);
+					item.setJump(6);
+					item.setWdef(220);
+					item.setMdef(220);
+					item.setStr(5);
+					item.setDex(5);
+					item.setInt(5);
+					item.setLuk(5);
+					item.setHp(450);
+					item.setMp(450);
+					item.setAvoid(7);
+					item.setAcc(7);
+					item.setWatk(2);
+					item.setMatk(2);
+					//FileoutputUtil.dbLog("ring/" + "huntring.txt", "캐릭터ID : " + cm.getPlayer().getId() + " / 닉네임 : " + cm.getPlayer().getName() + " / 내용 : " + item + " /"+getcompleteQuest());
+					cm.getPlayer().forceReAddItem(item, Packages.client.inventory.MapleInventoryType.EQUIP);
+					cm.sendSimple("강화 완료");
+					status = -1;
+				}
+			}
+			break;
+    }
+
+}
+
+
+function getList() {
+	Inv = cm.getInventory(1);
+	checkInv = false;
+	var message = "#e#b#z1112403##n#k를 선택해주세요.\r\n\r\n";
+	for (i = 0; i < Inv.getSlotLimit(); i++) {
+		if (Inv.getItem(i) == null) {
+			continue;
+		}
+		if (Inv.getItem(i).getItemId() != 1112403) {
+			continue;
+		}
+		checkInv = true;
+		message += "#L" + i + "##i" + Inv.getItem(i).getItemId() + ":# #b#t" + Inv.getItem(i).getItemId() + "##k\r\n";
+	}
+	if (!checkInv) {
+		cm.sendOk("#b사냥꾼의 반지#k를 착용 중이라면 장착 해제해주세요.");
+		status = -1;
+	}
+	cm.sendSimple(message);
+}
+
+function getListquest() {
+	Inv = cm.getInventory(1);
+	checkInv = false;
+	var message = "#e#b#z1112402##n#k를 선택해주세요.\r\n\r\n";
+	for (i = 0; i < Inv.getSlotLimit(); i++) {
+		if (Inv.getItem(i) == null) {
+			continue;
+		}
+		if (Inv.getItem(i).getItemId() != 1112402) {
+			continue;
+		}
+		checkInv = true;
+		message += "#L" + i + "##i" + Inv.getItem(i).getItemId() + ":# #b#t" + Inv.getItem(i).getItemId() + "##k\r\n";
+	}
+	if (!checkInv) {
+		cm.sendOk("#b퀘스트의 반지#k를 착용 중이라면 장착 해제해주세요.");
+		status = -1;
+	}
+	cm.sendSimple(message);
+}
+
+function getcompleteQuest() {
+	var con = null;
+	var ps = null;
+	var rs = null;
+	var resultCount = 0;
+	try {
+		con = DatabaseConnection.getConnection();
+		ps = con.prepareStatement("SELECT * FROM queststatus WHERE status = ? AND characterid = ?");
+
+		ps.setInt(1, 2);
+		ps.setInt(2, cm.getPlayer().getId());
+		rs = ps.executeQuery();
+		while (rs.next()) {
+			if (rs.getInt("quest") >= 1999) {
+				resultCount++;
+			}
+		}
+		rs.close();
+		ps.close();
+		con.close();
+		return resultCount;
+	} catch (e) {
+		cm.sendOk("오류가 발생하였습니다.\r\n\r\n" + e);
+		cm.dispose();
+		return;
+	} finally {
+		if (rs != null) {
+			rs.close();
+		}
+		if (ps != null) {
+			ps.close();
+		}
+		if (con != null) {
+			ps.close();
+		}
+	}
+}
+
+function showmobid() {
+	var con = null;
+	var ps = null;
+	var rs = null;
+	var say = "";
+	var show = false;
+	try {
+		con = DatabaseConnection.getConnection();
+		ps = con.prepareStatement("SELECT quest FROM queststatus where customData like '%등록%' AND characterid = ?");
+		ps.setInt(1, cm.getPlayer().getId());
+		rs = ps.executeQuery();
+		while (rs.next()) {
+			if (range == 10) {
+				if (rs.getInt("quest") >= 100100 && rs.getInt("quest") <= 2300100) {
+					show = true;
+					say += "#L" + rs.getInt("quest") + "##o" + rs.getInt("quest") + "# \r\n";
+				}
+			} else if (range == 11) {
+				if (rs.getInt("quest") >= 3000000 && rs.getInt("quest") <= 5400000) {
+					show = true;
+					say += "#L" + rs.getInt("quest") + "##o" + rs.getInt("quest") + "# \r\n";
+				}
+			} else if (range == 12) {
+				if (rs.getInt("quest") >= 6000000 && rs.getInt("quest") <= 9999999) {
+					show = true;
+					say += "#L" + rs.getInt("quest") + "##o" + rs.getInt("quest") + "# \r\n";
+				}
+			} else if (range == 13) {
+				if (rs.getInt("quest") >= 100100 && rs.getInt("quest") <= 9999999) {
+					show = true;
+					say += "#L" + rs.getInt("quest") + "##o" + rs.getInt("quest") + "# \r\n";
+				}
+			}
+		}
+		rs.close();
+		ps.close();
+		con.close();
+		if (show == true) {
+			cm.sendSimple(say);
+			status = -1;
+		} else {
+			cm.sendSimple("등록된 몬스터가 존재하지 않습니다.");
+			status = -1;
+		}
+	} catch (e) {
+		cm.sendOk("오류가 발생하였습니다.\r\n\r\n" + e);
+		cm.dispose();
+		return;
+	} finally {
+		if (rs != null) {
+			rs.close();
+		}
+		if (ps != null) {
+			ps.close();
+		}
+		if (con != null) {
+			ps.close();
+		}
+	}
+}
+
+function NotCompleteQuest() {
+	var con = null;
+	var ps1 = null;
+	var rs1 = null;
+	var ps2 = null;
+	var rs2 = null;
+	var say = "";
+	var show = false;
+	try {
+		con = DatabaseConnection.getConnection();
+		ps1 = con.prepareStatement("SELECT * FROM `mobname` ORDER BY `id` ASC");
+		rs1 = ps1.executeQuery();
+		while (rs1.next()) {
+			ps2 = con.prepareStatement("SELECT * FROM `queststatus` WHERE `quest` = ? AND `characterid` = ? AND `customdata` LIKE '%등록%'");
+			ps2.setInt(1, rs1.getInt("id"));
+			ps2.setInt(2, cm.getPlayer().getId());
+			rs2 = ps2.executeQuery();
+			if (!rs2.next()) {
+				if (range == 20) {
+					if (rs1.getInt("id") >= 100100 && rs1.getInt("id") <= 2300100) {
+						show = true;
+						say += "#L" + rs1.getInt("id") + "##o" + rs1.getInt("id") + "#\r\n";
+					}
+				} else if (range == 21) {
+					if (rs1.getInt("id") >= 3000000 && rs1.getInt("id") <= 5400000) {
+						show = true;
+						say += "#L" + rs1.getInt("id") + "##o" + rs1.getInt("id") + "#\r\n";
+					}
+				} else if (range == 22) {
+					if (rs1.getInt("id") >= 6000000 && rs1.getInt("id") <= 9999999) {
+						show = true;
+						say += "#L" + rs1.getInt("id") + "##o" + rs1.getInt("id") + "#\r\n";
+					}
+				} else if (range == 23) {
+					if (rs1.getInt("id") >= 100100 && rs1.getInt("id") <= 9999999) {
+						show = true;
+						say += "#L" + rs1.getInt("id") + "##o" + rs1.getInt("id") + "#\r\n";
+					}
+				}
+			}
+			rs2.close();
+			ps2.close();
+		}
+		rs1.close();
+		ps1.close();
+		if (show == true) {
+			cm.sendSimple(say);
+			status = -1;
+		} else {
+			cm.sendSimple("모든 컬렉션을 완료하였습니다.");
+			status = -1;
+			return;
+		}
+	} catch (e) {
+		cm.sendOk("오류가 발생하였습니다.\r\n\r\n" + e);
+		cm.dispose();
+		return;
+	} finally {
+		if (rs2 != null) {
+			rs2.close();
+		}
+		if (ps2 != null) {
+			ps2.close();
+		}
+		if (rs1 != null) {
+			rs1.close();
+		}
+		if (ps1 != null) {
+			ps1.close();
+		}
+		if (con != null) {
+			con.close();
+		}
+	}
+}
