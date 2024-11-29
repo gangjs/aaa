@@ -1,0 +1,39 @@
+
+' C열과 같은 값을 가진 A열의 값을 찾고 C행 D열의 값을 A행 B열의 값을 교체
+Sub MatchAndCopyValuesOptimized()
+    Dim ws As Worksheet
+    Dim lastRowA As Long, lastRowC As Long
+    Dim i As Long, j As Long
+    Dim dict As Object
+
+    Set ws = ThisWorkbook.Sheets(1)
+
+    ' A열과 C열의 마지막 행 
+    lastRowA = ws.Cells(ws.Rows.Count, "A").End(xlUp).Row
+    lastRowC = ws.Cells(ws.Rows.Count, "C").End(xlUp).Row
+
+    ' C열 값 저장
+    Set dict = CreateObject("Scripting.Dictionary")
+
+    Application.ScreenUpdating = False
+    Application.Calculation = xlCalculationManual
+
+    ' C열과 D열 데이터 저장
+    For i = 1 To lastRowC
+        If Not dict.exists(ws.Cells(i, "C").Value) Then
+            dict(ws.Cells(i, "C").Value) = ws.Cells(i, "D").Value
+        End If
+    Next i
+
+    ' A열의 값을 B열에 값 복사
+    For j = 1 To lastRowA
+        If dict.exists(ws.Cells(j, "A").Value) Then
+            ws.Cells(j, "B").Value = dict(ws.Cells(j, "A").Value)
+        End If
+    Next j
+
+    Application.ScreenUpdating = True
+    Application.Calculation = xlCalculationAutomatic
+
+    MsgBox "완료"
+End Sub
