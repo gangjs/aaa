@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="EUC-KR" ?>
+<npcclient>
+	<!-- 이것이 true이면 이 npc client는 포커스가 없어도 항상 CPU를 max로 잡아먹는다. -->
+	<maxcpu>true</maxcpu>
+	<!-- 이것이 true이면 구동되자 마자 자동으로 로그인되며 commands들도 자동 수행된다. -->
+	<autoprocess>true</autoprocess>
+	<!-- 이것이 true이면 GDI mode의 npc client의 msg log가 client>npcclog/ 에 저장된다. -->
+	<savelog>false</savelog>
+	<!-- 이것이 0이 아니면 주어진 시간마다 npc client의 동작을 확인하고 문제가 있는 것 같다 판단되면 죽어버린다. (ms) -->
+	<safetime>1200000</safetime>
+	<!-- 이 값이 0이 아니면 위의 safetime동안 이 fps보다 계속 낮게 유지가 되었다면 죽어버린다. -->
+	<safefps>1</safefps>
+	<!-- 이것이 true이면 네트워크가 비동기로 동작한다. Console에서 Network Mode: Sync 메시지를 확인할 수 있어야 한다. -->
+	<asyncnetwork>true</asyncnetwork>
+	<!-- region_template preload 시 발생하는 메모리릭 제거를 할 것인가.-->
+	<preloadregionmemoryleakimprovement>true</preloadregionmemoryleakimprovement>
+
+	<!-- 로그인 아이디, 패스워드, 서버군, 멀티서버 이름 -->
+	<account>xxx123</account>
+	<password>123123</password>
+	<servergroup>sqlq</servergroup>
+	<multiserver>Korea_Channel</multiserver>
+	
+	<!-- 아래 커맨드 그룹들을 배치로 실행하기 위한 그룹 -->
+	<!-- NPC 클라이언트의 프로세스 아규먼트로 "npcbatchjob:xxx" 와 같이 넣으면 자동으로 수행된다. -->
+	<batch_jobs>
+		<!-- NPC 클라이언트 한대로 다 돌릴 때 -->
+		<job name="default" commands="region_preload;alloc_dungeon;openerinnland;group1;group2;group3;group4" />
+
+		<!-- 아래 2개를 띄우거나 3개를 띄우거나 -->
+		<job name="main" commands="alloc_dungeon;group1" />
+		<job name="sub" commands="alloc_dungeon;group2;group3" />
+		<job name="sub1" commands="alloc_dungeon;group2" />
+		<job name="sub2" commands="alloc_dungeon;group3" />
+		<job name="dungeon_only" commands="region_preload;alloc_dungeon" />	
+		<job name="subJP" commands="alloc_dungeon;group2;group3;group4" />
+		<job name="main_test" commands="alloc_dungeon;group1;group2;group3" />
+		<job name="livescreen" commands="livescreen" />	
+	</batch_jobs>
+
+	<!-- 예약된 command들, 아래 명령들이 순서대로 실행될 것이다. -->
+	<commands name="region_preload">
+		<!-- Dynamic Region Template Preload -->
+		<cmd>>region_template preload</cmd>
+	</commands>	
+	
+	<commands name="alloc_dungeon">
+		<!-- 던전 몬스터 예약 -->
+		<cmd>>alloc_dungeon 10000</cmd>
+		<cmd>>set_event /type:compensation /id:66666 /start</cmd>
+
+	</commands>	
+	
+	<!-- 각 그룹별로 몬스터를 할당할 리젼의 이름을 적는다. -->
+	<commands name="group1">
+		<cmd>>alloc_region Uladh_main</cmd>
+		<cmd>>alloc_region Uladh_Dunbarton</cmd>
+		<cmd>>alloc_region Ula_DgnArena_Dunbarton_Arena</cmd>
+		<cmd>>alloc_region Uladh_Dun_to_Tircho</cmd>
+		<cmd>>alloc_region Ula_Dun_to_Bangor</cmd>
+		<cmd>>alloc_region Ula_Sen_Mag</cmd>
+		<cmd>>alloc_region Ula_Emainmacha_Ceo</cmd>
+		<cmd>>alloc_region Iria_SW_main_field</cmd>
+		<cmd>>alloc_region Iria_NW_tunnel_S</cmd>
+		<cmd>>alloc_region Iria_NW_tunnel_N</cmd>
+		<cmd>>alloc_region Iria_NW_mineB2</cmd>
+		<cmd>>alloc_region Iria_NW_mineB3</cmd>
+		<cmd>>alloc_region Iria_SE_MineField01</cmd>
+		<cmd>>alloc_region Iria_SE_MineField02</cmd>
+	</commands>	
+	<commands name="group2">
+		<cmd>>alloc_region Sidhe_Sneachta_S</cmd>
+		<cmd>>alloc_region Sidhe_Sneachta_N</cmd>
+		<cmd>>alloc_region Ula_Tirnanog</cmd>
+		<cmd>>alloc_region Uladh_Dunbarton_School_LectureRoom_night</cmd>
+		<cmd>>alloc_region Ula_Emainmacha</cmd>
+		<cmd>>alloc_region Iria_SE_main_field</cmd>
+		<cmd>>alloc_region Iria_Elf_Tutorial</cmd>
+		<cmd>>alloc_region Iria_SE_Desert_underground</cmd>
+		<cmd>>alloc_region Iria_NW_main_field</cmd>
+		<cmd>>alloc_region Iria_NW_Tutorial</cmd>
+		<cmd>>alloc_region Iria_C_main_field</cmd>
+		<cmd>>alloc_region Iria_fieldBoss_Centerdesert</cmd>
+		<cmd>>alloc_region Iria_fieldBoss_Meadow</cmd>
+		<cmd>>alloc_region Iria_fieldBoss_Middledesert</cmd>
+		<cmd>>alloc_region _TestRegion</cmd>
+	</commands>	
+	<commands name="group3">
+		<cmd>>alloc_region Ula_Morva_Aisle</cmd>
+		<cmd>>alloc_region Beginner_Tutorial</cmd>
+		<cmd>>alloc_region Tin_Beginner_Tutorial</cmd>
+		<cmd>>alloc_region Ula_Osna_Sail</cmd>
+		<cmd>>alloc_region Event_snowfield</cmd>
+		<cmd>>alloc_region Iria_NN_main_field</cmd>
+		<cmd>>alloc_region BlockRegion</cmd>
+		<cmd>>alloc_region Taillteann_E_field</cmd>
+		<cmd>>alloc_region Taillteann_SE_field</cmd>
+		<cmd>>alloc_region taillteann_main_field</cmd>
+		<cmd>>alloc_region Tara_main_field</cmd>
+		<cmd>>alloc_region Tara_N_Field</cmd>
+		<cmd>>alloc_region Tara_SE_Field</cmd>
+		<cmd>>alloc_region Tara_castle_gatehall</cmd>
+		<cmd>>alloc_region Avon_main_field</cmd>
+		<cmd>>alloc_region Uladh_Cobh_harbor</cmd>
+		<cmd>>alloc_region Belfast_human</cmd>
+		<cmd>>alloc_region Belfast_Skatha_main_field</cmd>
+		<cmd>>alloc_region Belfast_Skatha_cave_01</cmd>
+		<cmd>>alloc_region Tara_castle_1F</cmd>
+		<cmd>>alloc_region Tutorial_Zone</cmd>
+		<cmd>>alloc_npc ErinnLand</cmd>
+	</commands>	
+	<commands name="group4">
+		<cmd>>alloc_region JP_Nekojima_islet</cmd>
+	</commands>	
+		<commands name="openerinnland">
+		<cmd>>erinnland /type:catchingtail /open</cmd>
+		<cmd>>erinnland /type:hammer /open</cmd>
+		<cmd>>erinnland /type:dart /open</cmd>
+		<cmd>>erinnland /type:shooting /open</cmd>
+		<cmd>>erinnland /type:punchmachine /open</cmd>
+		<cmd>>erinnland /type:nightmare /open</cmd>
+		<cmd>>erinnland /type:monsterdefense /open</cmd>
+	</commands>
+</npcclient>
