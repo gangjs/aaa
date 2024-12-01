@@ -1,0 +1,33 @@
+@echo off
+cd DB_XMLServer
+start XMLDB.exe
+timeout 3 /nobreak
+start XMLDBAccountManager.exe
+cd ..
+cd Authenticator
+start Authenticator_Console.exe 
+timeout 2 /nobreak
+cd ..
+cd LoginServer64
+start LoginServer2.exe setting:"file://data/features.xml=Regular, China"
+timeout 15 /nobreak
+cd ..
+cd AuctionServer
+start Auction.exe setting:"file://data/features.xml=Regular, China"
+timeout 18 /nobreak
+cd ..
+cd Coordinator64
+start Coordinator.exe setting:"file://data/features.xml=Regular, China"
+timeout 15 /nobreak
+cd ..
+cd GameServer64_ch1
+start GameServer(x64).exe setting:"file://data/features.xml=Regular, China"
+timeout 320 /nobreak
+:: 리캐싱 time 수정
+cd ..
+cd NpcClient_ch1
+start ClientD.exe code:1215 logip:127.0.0.1 logport:21000 setting:"file://data/features.xml=Regular, China" sublocale:ServerGroup01 npcbatchjob:default render:no
+::cd ..
+::cd MessengerServer
+::start MabiMessengerServer.exe
+exit 
