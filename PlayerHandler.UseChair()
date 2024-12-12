@@ -1,0 +1,26 @@
+public static final void UseChair(final int itemId, final MapleClient c, final MapleCharacter chr) {
+	
+	//...
+
+	// 에그 추가부분 시작
+	int chair = 0;
+	
+	for (int i = 0; i < chr.eggChair.length; i++) {
+		if (itemId == chr.eggChair[i]) {
+			chair = 1;
+			break;
+		}
+	}
+	
+	if (chair == 1 && chr.getMapId() == 910000000) { //자유시장에서 앉아있으면
+		chr.eggTimer(300000); //30초에 타이머 한번
+	}
+	// 에그 추가부분 끝
+	
+	chr.setChair(itemId);
+	chr.getMap().broadcastMessage(chr, MaplePacketCreator.showChair(chr.getId(), itemId), false);
+	c.getSession().write(MaplePacketCreator.enableActions());	
+	
+	// ...
+
+}
