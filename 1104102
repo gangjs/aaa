@@ -1,0 +1,229 @@
+importPackage(Packages.handling.channel.handler);
+importPackage(Packages.constants);
+
+var status = -1;
+var enter = "\r\n";
+var meso = 0;
+var mesoIcon = "#i4031138#"
+var mapleIcon = "#i4001126#"
+var cashIcon = "#fUI/CashShop.img/CashItem/0#"
+var meso1 = 500000;
+var meso2 = 5000000;
+var formattedMeso1 = addCommas(meso1);
+var formattedMeso2 = addCommas(meso2);
+
+function start() {
+    status = -1;
+    action (1, 0, 0);
+}
+
+function action(mode, type, selection) {
+    if (mode == -1) {
+        cm.dispose();
+        return;
+    }
+    if (mode == 0) {
+        status --;
+    }
+    if (mode == 1) {
+        status++;
+    }
+    if (status == 0) {
+        var message = "";
+		message += "" + cashIcon + "#e [캐시 교환]#n\r\n";
+		message += "\r\n교환할 수량을 선택해주세요.";
+//		message += mapleIcon + "#r#e#z4001126##n#k은 20,000원 후원으로 구매 가능합니다.\r\n\r\n교환할 재화를 선택해주세요.";
+		message += "#k\r\n#L11#" + mesoIcon + "#b " + formattedMeso1 + " 메소   -> " + cashIcon + " 5,000 캐시";
+		message += "#k\r\n#L13#" + mesoIcon + "#b " + formattedMeso2 + " 메소 -> " + cashIcon + " 50,000 캐시";
+//		message += "#k\r\n#L21# " + cashIcon + "#b 20,000 캐시  ->  " + mapleIcon + " 단풍잎 1개";
+//		message += "#k\r\n#L22# " + cashIcon + "#b 200,000 캐시 ->  " + mapleIcon + " 단풍잎 10개";
+//		message += "#k\r\n#L23# " + mapleIcon + " #r단풍잎 1개#k" + "   -> " + cashIcon + "#b 20,000 캐시";
+//		message += "#k\r\n#L24# " + mapleIcon + " #r단풍잎 10개#k" + " -> " + cashIcon + "#b 200,000 캐시";
+
+        cm.sendSimple(message);
+    } else if (status == 1){
+		if (selection == 11) {
+			cm.sendYesNo("#e#b" + formattedMeso1 + " 메소#k를 #r5,000 캐시#k#n로 교환하시겠습니까?");
+			meso = 11;
+		} else if (selection == 13) {
+			cm.sendYesNo("#e#b" + formattedMeso2 + " 메소#k를 #r50,000 캐시#k#n로 교환하시겠습니까?");
+			meso = 13;
+		} else if (selection == 23) {
+			cm.sendYesNo(mapleIcon + "#r#e단풍잎 1개#k#n를 #e#b20,000 캐시#k#n로 교환하시겠습니까?");
+			meso = 23;
+		} else if (selection == 24) {
+			cm.sendYesNo(mapleIcon + "#r#e단풍잎 10개#k#n를 #e#b200,000 캐시#k#n로 교환하시겠습니까?");
+			meso = 24;
+		} else if (selection == 21) {
+			cm.sendYesNo("#e#b20,000 캐시#k를 " + mapleIcon + "#r단풍잎 1개#k#n로 교환하시겠습니까?");
+			meso = 21;
+		} else if (selection == 22) {
+			cm.sendYesNo("#e#b200,000 캐시#k를 " + mapleIcon + "#r단풍잎 10개#k#n로 교환하시겠습니까?");
+			meso = 22;
+		} 
+	}else if (status == 2){
+		if (meso == 11) {
+			if (cm.getPlayer().getLevel() > 9) {
+				if (cm.getPlayer().getMeso() >= meso1) {	
+					cm.worldMessage(2, "메소 교환 : " + cm.getPlayer().getName() + "님이 " + formattedMeso1 + " 메소를 5,000 캐시로 교환하였습니다!");
+					cm.gainMeso (-meso1);
+					cm.gainNX (5000);
+					cm.sendOk ("" + formattedMeso1 + " 메소를 5,000 캐시로 교환하였습니다!");
+					cm.dispose();
+				} else {
+					cm.sendOk ("메소가 부족합니다!");
+					cm.dispose();
+				}
+			} else {
+				cm.sendOk ("레벨 10이상 이용하실수 있습니다.");
+				cm.dispose();
+			}
+		} else if (meso == 13) {
+			if (cm.getPlayer().getLevel() > 9) {
+				if (cm.getPlayer().getMeso() >= meso2) {
+					cm.worldMessage(2, "메소 교환 : " + cm.getPlayer().getName() + "님이 " + formattedMeso2 + " 메소를 50,000 캐시로 교환하였습니다!");
+					cm.gainMeso (-meso2);
+					cm.gainNX (50000);
+					cm.sendOk ("" + formattedMeso1 + " 메소를 50,000 캐시로 교환하였습니다!");
+					cm.dispose();
+				} else {
+					cm.sendOk ("메소가 부족합니다!");
+					cm.dispose();
+				}
+			} else {
+				cm.sendOk ("레벨 10이상 이용하실수 있습니다.");
+				cm.dispose();
+			}
+		} else if (meso == 21) {
+			if (cm.getPlayer().getCSPoints(1) >= 20000 && cm.canHold(4001126, 1)) {
+				cm.worldMessage(2, "캐시 교환 : " + cm.getPlayer().getName() + "님이 " + "20,000 캐시를 단풍잎 1개로 교환하였습니다!");
+				cm.gainNX (-20000);
+				cm.gainItem (4001126, 1);
+				cm.sendOk ("#e#b20,000 캐시#k를 #i4001126##e#b#t4001126# 1개#k로 교환하였습니다!#n");
+			} else {
+				cm.sendOk ("캐시 혹은 인벤토리가 부족합니다.");
+			}
+			cm.dispose();
+			return;
+		} else if (meso == 22) {
+			if (cm.getPlayer().getCSPoints(1) >= 200000 && cm.canHold(4001126, 10)) {
+				cm.worldMessage(2, "캐시 교환 : " + cm.getPlayer().getName() + "님이 " + "200,000 캐시를 단풍잎 10개로 교환하였습니다!");
+				cm.gainNX (-200000);
+				cm.gainItem (4001126, 10);
+				cm.sendOk ("#e#b200,000 캐시#k를 #i4001126##e#b#t4001126# 10개#k로 교환하였습니다!#n");
+			} else {
+				cm.sendOk ("캐시 혹은 인벤토리가 부족합니다.");
+			}
+			cm.dispose();
+			return;
+		} else if (meso == 23) {
+			if (cm.haveItem(4001126, 1)) {
+				cm.worldMessage(2, "단풍잎 교환 : " + cm.getPlayer().getName() + "님이 " + "단풍잎 1개를 20,000 캐시로 교환하였습니다!");	
+				cm.gainItem (4001126, -1);
+				cm.gainNX (20000);
+				cm.sendOk ("#i4001126##e#r#t4001126# 1개#k를 #e#b20,000 캐시#k로 교환하였습니다!#n");
+			} else {
+				cm.sendOk ("단풍잎이 부족합니다.");
+			}
+			cm.dispose();
+			return;
+		} else if (meso == 24) {
+			if (cm.haveItem(4001126, 10)) {		
+				cm.worldMessage(2, "단풍잎 교환 : " + cm.getPlayer().getName() + "님이 " + "단풍잎 10개를 200,000 캐시로 교환하였습니다!");	
+				cm.gainItem (4001126, -10);
+				cm.gainNX (200000);				
+				cm.sendOk ("#i4001126##e#r#t4001126# 10개#k를 #e#b200,000 캐시#k로 교환하였습니다!#n");
+			} else {
+				cm.sendOk ("단풍잎이 부족합니다.");
+			}
+			cm.dispose();
+			return;
+		}/*else if (status == 2){
+		if (selection == 11) {
+			if (cm.getPlayer().getLevel() > 9) {
+				if (cm.getPlayer().getMeso() >= 500000) {	
+					cm.worldMessage(2, "메소 교환 : " + cm.getPlayer().getName() + "님이 " + "500,000 메소를 5,000 캐시로 교환하였습니다!");
+					cm.gainMeso (-500000);
+					cm.gainNX (5000);
+					cm.sendOk ("500,000 메소를 5,000 캐시로 교환하였습니다!");
+					cm.dispose();
+				} else {
+					cm.sendOk ("메소가 부족합니다!");
+					cm.dispose();
+				}
+			} else {
+				cm.sendOk ("레벨 10이상 이용하실수 있습니다.");
+				cm.dispose();
+			}
+		} else if (selection == 12) {
+			if (cm.getPlayer().getLevel() > 9) {
+				if (cm.getPlayer().getMeso() >= 2500000) {
+					cm.worldMessage(2, "메소 교환 : " + cm.getPlayer().getName() + "님이 " + "2,500,000 메소를 25,000 캐시로 교환하였습니다!");
+					cm.gainMeso (-2500000);
+					cm.gainNX (25000);
+					cm.sendOk ("2,500,000 메소를 25,000 캐시로 교환하였습니다!");
+					cm.dispose();
+				} else {
+					cm.sendOk ("메소가 부족합니다!");
+					cm.dispose();
+				}	
+		    } else {
+			    cm.sendOk ("레벨 10이상 이용하실수 있습니다.");
+			    cm.dispose();
+			}
+		} else if (selection == 13) {
+			if (cm.getPlayer().getLevel() > 9) {
+				if (cm.getPlayer().getMeso() >= 5000000) {
+					cm.worldMessage(2, "메소 교환 : " + cm.getPlayer().getName() + "님이 " + "5,000,000 메소를 50,000 캐시로 교환하였습니다!");
+					cm.gainMeso (-5000000);
+					cm.gainNX (50000);
+					cm.sendOk ("5,000,000 메소를 50,000 캐시로 교환하였습니다!");
+					cm.dispose();
+				} else {
+					cm.sendOk ("메소가 부족합니다!");
+					cm.dispose();
+				}
+			} else {
+				cm.sendOk ("레벨 10이상 이용하실수 있습니다.");
+				cm.dispose();
+			}
+		} else if (selection == 50001) {
+			if (cm.getPlayer().getCSPoints(1) >= 400000) {
+				cm.worldMessage(2, "캐시 교환 : " + cm.getPlayer().getName() + "님이 " + "400,000 캐시를 단풍잎 1개로 교환하였습니다!");
+				cm.gainNX (-400000);
+				cm.gainItem (4001126, 1);
+				cm.sendOk ("#e#b400,000 캐시#k를 #i4001126##e#b#t4001126# 1개#k로 교환하였습니다!#n");
+			} else {
+				cm.sendOk ("캐시가 부족합니다!");
+			}
+			cm.dispose();
+			return;
+		} else if (selection == 50002) {
+			if (cm.getPlayer().getCSPoints(1) >= 2000000) {
+				cm.worldMessage(2, "캐시 교환 : " + cm.getPlayer().getName() + "님이 " + "2,000,000 캐시를 단풍잎 5개로 교환하였습니다!");
+				cm.gainNX (-2000000);
+				cm.gainItem (4001126, 5);
+				cm.sendOk ("#e#b2,000,000 캐시#k를 #i4001126##e#b#t4001126# 5개#k로 교환하였습니다!#n");
+			} else {
+				cm.sendOk ("캐시가 부족합니다!");
+			}
+			cm.dispose();
+			return;
+		} else if (selection == 50003) {
+			if (cm.getPlayer().getCSPoints(1) >= 4000000) {
+				cm.worldMessage(2, "캐시 교환 : " + cm.getPlayer().getName() + "님이 " + "4,000,000 캐시를 단풍잎 10개로 교환하였습니다!");
+				cm.gainNX (-4000000);
+				cm.gainItem (4001126, 10);
+				cm.sendOk ("#e#b4,000,000 캐시#k를 #i4001126##e#b#t4001126# 10개#k로 교환하였습니다!#n");
+			} else {
+				cm.sendOk ("캐시가 부족합니다!");
+			}
+			cm.dispose();
+			return;		
+		}*/
+	}	
+}
+
+function addCommas(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
