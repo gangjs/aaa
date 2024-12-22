@@ -1,0 +1,9 @@
+public final void addPlayer(final MapleCharacter chr) {
+	
+	//...
+   
+	chr.cancelEgg(); //피그미 에그 중단
+
+	//...
+	
+}
