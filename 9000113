@@ -21,10 +21,22 @@ var potion = [
     4004004, 4004000, 4004001, 4004003, 4004002, 4010003, 4010000, 4010001, 4020000, 4010004, // 원석
 	4010005, 4010006, 4010007, 4010002, 4020001, 4020002, 4020003, 4020004, 4020005, 4020006, 4020007, // 원석끝
 	4170007, 4000245, 4000244, 4020009, 2022070, // 피그미에그, 장비재료
+	3010007, 3010063, 3010067, 3010009, 
+	3010132, 3010154, 3010186, 3010205, 3010207, 3010288, 3010298, 3010374, 3010421, 3010429, 
+	3010430, 3010435, 3010436, 3010438, 3010439, 3010440, 3010447, 3010448, 3010450, 3010455, 
+	3010465, 3010674, 3010682, 3010066, 3010018,
+	3010690, 3010134, 3010065, 3010064, 3010434, 3010113, 3010114, 3010129, 3010131, 3010130,	// 의자들
+
 ];
 
 	
-var enter = [2000009, 2000011, 2002007, 2022025, 5121008, 2040803, 2040804, 2040805, 2040800, 2040801, 2040802, 2040300, 2040301, 2040302, 2040317, 4004000, 4004003, 4010003, 4010002, 4020002, 4020004, 4020006, 4000244, 4170007, 2070013];	
+var enter = [
+			2000009, 2000011, 2002007, 2022025, 5121008, 2040803, 2040804, 2040805, 2040800, 2040801, 2040802, 2040300, 2040301, 2040302, 2040317, 4004000, 4004003, 4010003, 4010002, 4020002, 4020004, 4020006, 4000244, 4170007, 2070013, 2022070,
+			3010009, 3010063, 3010434, 3010114, 3010130, 3010154, 3010205, 3010288, 3010374, 3010429, 3010435, 3010438, 3010440, 
+			3010448, 3010455, 3010674, 3010690, 3010065, 3010066, 3010191, 3010636, 3010514
+
+
+			];	
 var noenter = [2050002, 2010000, 2010004, 2020002, 4011001, 4011004, 4021001, 4011007];
 function UpdateTime() { //매 status 마다 시간 동기화
 	time = System.currentTimeMillis();
@@ -60,7 +72,7 @@ function action(mode, type, selection) {
 			message += "\r\n#L" + i + "##i" + itmeArray[i] + ":# #b#t" + itmeArray[i] + "##k " + Extra[i] + "";
 		}*/
 		message += "\r\n#L998##r피그미 에그란?";
-		message += "\r\n#L997##r접속보상 피그미 에그 교환";
+		message += "\r\n#L997##r피그미 에그 교환";
 		message += "\r\n#L999##b랜덤 뽑기#r(아쿠아리움)";
 		message += "\r\n#L9992##b랜덤 뽑기#r(오르비스)";
 //		message += "\r\n#L9991##b랜덤 뽑기#r(메소)";
@@ -97,7 +109,7 @@ function action(mode, type, selection) {
 			selpo = selection;
 			var asktoyou = "#i4170007# #b#t4170007##k 1개가 필요합니다.\r\n\r\n";
 			asktoyou += "#e뽑기 아이템 목록#n (전체 상품 확률 동일)\r\n";
-			asktoyou += "주문서(1개) / 포션(100개) / 기타(n개)#n \r\n\r\n";
+			asktoyou += "주문서(1개) / 포션(100개) / 의자(1개) / 기타(n개)#n \r\n\r\n";
 			for (var i = 0; i < potion.length; i++) {
 				asktoyou += "   #i" + potion[i] + ":# #b#t" + potion[i] + "##k";
 				if(noenter.indexOf(potion[i]) == -1) {
@@ -123,9 +135,9 @@ function action(mode, type, selection) {
 			cm.sendSimple(askegg);
 			
 		} else if (selection == 998) {
-			var message = "#i4170005##b(루디브리엄)#k : 접속 보상 (10분마다 지급)\r\n\r\n";
-			message += "#i4170007##b(아쿠아리움)#k : 루디브리엄 에그 18개로 교환\r\n\r\n";
-			message += "#i4170006##b(오르비스)#k : 단풍잎으로 교환할 수 있는 피그미 에그\r\n\r\n";		
+			var message = "#i4170005##b 루디브리엄#k : 자유시장에서 의자 사용 시 획득(10분)\r\n\r\n";
+			message += "#i4170007##b 아쿠아리움#k : 루디브리엄 에그 18개로 교환\r\n\r\n";
+			message += "#i4170006##b 오르비스#k : 단풍잎으로 교환할 수 있는 피그미 에그\r\n\r\n";		
 			cm.sendOk(message);
 			cm.dispose();
 		} else if (selection == 9991) {
@@ -133,7 +145,7 @@ function action(mode, type, selection) {
 			selpo = selection;
 			var asktoyou = "#b500만 메소#k가 필요합니다.\r\n\r\n"
 			asktoyou += "#e뽑기 아이템 목록#n (전체 상품 확률 동일)\r\n";
-			asktoyou += "주문서(1개) / 포션(100개) / 기타(n개)#n \r\n\r\n";
+			asktoyou += "주문서(1개) / 포션(100개) / 의자(1개) / 기타(n개)#n \r\n\r\n";
 			for (var i = 0; i < potion.length; i++) {
 				asktoyou += "   #i" + potion[i] + ":# #b#t" + potion[i] + "##k";
 				if(noenter.indexOf(potion[i]) == -1) {
@@ -154,7 +166,7 @@ function action(mode, type, selection) {
 			selpo = selection;
 			var asktoyou = "#i4170006# #b#t4170006##k 1개가 필요합니다.\r\n\r\n";
 			asktoyou += "#e뽑기 아이템 목록#n (전체 상품 확률 동일)\r\n";
-			asktoyou += "주문서(1개) / 포션(100개) / 기타(n개)#n \r\n\r\n";
+			asktoyou += "주문서(1개) / 포션(100개) / 의자(1개) / 기타(n개) #n \r\n\r\n";
 			for (var i = 0; i < potion.length; i++) {
 				asktoyou += "   #i" + potion[i] + ":# #b#t" + potion[i] + "##k";
 				if(noenter.indexOf(potion[i]) == -1) {
@@ -340,6 +352,8 @@ function action(mode, type, selection) {
 						cm.gainItem(potion[potionss], 2);
 					} else if (potion[potionss] == 4020009) {
 						cm.gainItem(potion[potionss], 5);
+					} else if (potion[potionss] >= 3010000 && potion[potionss] <= 3010999) {
+						cm.gainItem(potion[potionss], 1);
 					} else {
 						cm.gainItem(potion[potionss], 100);
 					}
@@ -405,6 +419,8 @@ function action(mode, type, selection) {
 						cm.gainItem(potion[potionss], 2);
 					} else if (potion[potionss] == 4020009) {
 						cm.gainItem(potion[potionss], 5);
+					} else if (potion[potionss] >= 3010000 && potion[potionss] <= 3010999) {
+						cm.gainItem(potion[potionss], 1);
 					} else {
 						cm.gainItem(potion[potionss], 100);
 					}
@@ -471,6 +487,8 @@ function action(mode, type, selection) {
 						cm.gainItem(potion[potionss], 2);
 					} else if (potion[potionss] == 4020009) {
 						cm.gainItem(potion[potionss], 5);
+					} else if (potion[potionss] >= 3010000 && potion[potionss] <= 3010999) {
+						cm.gainItem(potion[potionss], 1);
 					} else {
 						cm.gainItem(potion[potionss], 100);
 					}
