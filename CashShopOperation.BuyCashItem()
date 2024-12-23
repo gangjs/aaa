@@ -1,0 +1,22 @@
+public static final void BuyCashItem(final LittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
+	
+	// ...
+	
+	boolean Donate = sn >= 40000000 && sn <= 49999999 || sn == 10001507 || sn == 10001629 || sn == 10001373 || sn == 10001667;
+	if (Donate && chr.getCSPoints(1) == chr.getCSPoints(toCharge)) {
+		c.getPlayer().dropMessage(1, "이 아이템은 메이플 포인트로만 구매 할 수 있습니다.");
+		doCSPackets(c);
+		return;
+	}
+	*/
+	// 메인 카테고리 4 기존 설치탭 스페셜로 변경
+	boolean Donate =  sn == 10001507 || sn == 10001629 || sn == 10001373 || sn == 10001667;
+	if (Donate && chr.getCSPoints(1) == chr.getCSPoints(toCharge)) {
+		c.getPlayer().dropMessage(1, "이 아이템은 메이플 포인트로만 구매 할 수 있습니다.");
+		doCSPackets(c);
+		return;
+	}
+
+	// ...
+
+}
