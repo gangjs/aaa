@@ -1,0 +1,10 @@
+public final void cancelEgg() {
+	if (eggTimer != null) {
+		if (getMapId() == 910000000) {
+			getClient().getSession().write(MaplePacketCreator.sendHint("피그미 에그 획득 중지", 250, 60));
+			getClient().getSession().write(MaplePacketCreator.serverNotice(5, "의자에서 일어나 피그미 에그 획득을 그만두었습니다."));
+		}
+		eggTimer.cancel(false);
+		eggTimer = null;
+	}
+}
