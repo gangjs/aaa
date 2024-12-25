@@ -1,0 +1,31 @@
+public static void applyAttack(final AttackInfo attack, final Skill theSkill, final MapleCharacter player, int attackCount, final double maxDamagePerMonster, final MapleStatEffect effect, final AttackType attack_type) {
+
+	// ...
+	
+	if (eachd > maxDamagePerHit) {
+		player.getCheatTracker().registerOffense(CheatingOffense.HIGH_DAMAGE, "[Damage: " + eachd + ", Expected: " + maxDamagePerHit + ", Mob: " + monster.getId() + "] [Job: " + player.getJob() + ", Level: " + player.getLevel() + ", Skill: " + attack.skill + "]");                                                                                      
+		
+		
+		// 인게임 채팅 알림 + 로그 txt 파일 저장
+		if(player.getLevel() > 10 && attack.skill != 3121004) {   // 폭풍의 시 스킬 사용 아니면 데미지 변조 의심
+			World.Broadcast.broadcastGMMessage(MaplePacketCreator.serverNotice(6, "데미지의심 : " + player.getName()));
+			FileoutputUtil.log(FileoutputUtil.핵감지로그, "[" + CurrentReadable_Time() + "] 캐릭터ID : " + player.getId() + "  /  닉네임 : " + player.getName() + "  /  넣은데미지 : " + eachd + ", 예상데미지 : " + maxDamagePerHit + ", 몬스터 : " + monster.getId() + "] [직업 : " + player.getJob() + ", 레벨 : " + player.getLevel() + ", 스킬 : " + attack.skill + "]");
+		};
+		
+		/*
+		 // 폭풍의시나 이것저것 스킬들이 밴 되므로 레벨 30이전에 전부 거름
+		if(player.getLevel() < 30) {
+			String reason = "핵 사용으로 인한 밴";
+			if (player.ban(reason, true, false, true, "운영자")) {
+				World.Broadcast.broadcastGMMessage(MaplePacketCreator.serverNotice(6, "[밴] 핵 감지로 " + player.getName() + " 님이 밴 처리되었습니다."));
+			}; 
+		};
+		*/
+		
+		// ...
+		
+	}
+	
+	// ...
+
+}
