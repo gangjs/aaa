@@ -1,0 +1,31 @@
+public static final void login(final LittleEndianAccessor slea, final MapleClient c) {
+
+	// ...
+	
+	int checkid;
+	
+	try {
+            checkid = AutoRegister.checkAccount(c, login, pwd);
+            if (checkid == 0) {
+                boolean f = logint.charAt(0) == '~'; // ~붙이면 여자계정
+                if (f) {
+                    login = login.substring(1); // '~'를 제거
+                }
+                AutoRegister.registerAccount(c, login, pwd, f); // 여기 메서드에서 여자계정 관리
+                c.getSession().write(MaplePacketCreator.serverNotice(1, "아이디:" + login + "\r\n비밀번호:" + pwd + "\r\n계정 생성이 완료 되었습니다.\r\n메이플스토리에 오신것을 환영합니다."));
+                c.getSession().write(LoginPacket.getLoginFailed(20));
+                return;
+            } else if (checkid == 6) {
+                c.getSession().write(MaplePacketCreator.serverNotice(1, "한 IP당 1개의 계정생성만 가능합니다."));
+                c.getSession().write(LoginPacket.getLoginFailed(20));
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
+	
+	
+	// ...
+
+
+}
