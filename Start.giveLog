@@ -1,0 +1,80 @@
+public class Start implements ActionListener {
+
+	// ...
+	
+	MapleClient c;
+
+	// ...
+	
+	
+	class cashgive extends Thread {
+
+		@Override
+		public void run() {
+			String txtname = txtfield1.getText();
+			String txtcashgive = txtfield2.getText();
+			int cash = Integer.parseInt(txtcashgive);
+			MapleCharacter hp = getPlayer(txtname);
+			if (hp == null) {
+				JOptionPane.showMessageDialog(null, "서버에서 " + txtname + "님을 찾을수없습니다!", "오류", JOptionPane.ERROR_MESSAGE);               
+			} else {
+				hp.modifyCSPoints(1, cash, false);
+				hp.getClient().getPlayer().dropMessage(1, "서버관리기로 부터 " + txtcashgive + " 캐시가 지급되었습니다.");
+				FileoutputUtil.log(FileoutputUtil.지급로그, "[" + FileoutputUtil.CurrentReadable_Time() + "] 계정ID : " + hp.getAccountID() + 
+						" / 캐릭터ID : " + hp.getId() + " / 캐릭터ID : " + txtname + " / 지급한 캐시 : " + txtcashgive + "");                               
+				System.out.println(txtname + "님께 캐시를 지급했습니다.");
+			}
+		}
+	}
+
+	class mesogive extends Thread {
+
+		@Override
+		public void run() {
+			String txtname = txtfield1.getText();
+			String txtmesogive = txtfield2.getText();
+			int meso = Integer.parseInt(txtmesogive);
+			MapleCharacter hp = getPlayer(txtname);
+			if (hp == null) {
+				JOptionPane.showMessageDialog(null, "서버에서 " + txtname + "님을 찾을수없습니다!", "오류", JOptionPane.ERROR_MESSAGE);
+			} else {
+				hp.gainMeso(meso, false);
+				hp.getClient().getPlayer().dropMessage(1, "서버관리기로 부터 " + txtmesogive + " 메소가 지급되었습니다.");
+				FileoutputUtil.log(FileoutputUtil.지급로그, "[" + FileoutputUtil.CurrentReadable_Time() + "] 계정ID : " + hp.getAccountID() + 
+						" / 캐릭터ID : " + hp.getId() + " / 캐릭터ID : " + txtname + " / 지급한 메소 : " + txtmesogive + "");  
+				System.out.println(txtname + "님께 메소를 지급했습니다.");
+			}
+		}
+	}
+
+	class itemgive extends Thread {
+
+		@Override
+		public void run() {
+			String txtname = txtfield1.getText();
+			String txtitemgive = txtfield2.getText();
+			String txtitemamount = txtfield3.getText();
+			int itemId = Integer.parseInt(txtitemgive);
+			short num = Short.parseShort(txtitemamount);
+			MapleCharacter hp = getPlayer(txtname);
+			
+			
+			if (hp == null) {
+				JOptionPane.showMessageDialog(null, "서버에서 " + txtname + "님을 찾을수없습니다!", "오류", JOptionPane.ERROR_MESSAGE);
+			} else {
+				if(c.getPlayer().getInventory(GameConstants.getInventoryType(itemId)).getNextFreeSlot() > -1){ // 아이템 슬롯 있으면
+					hp.gainItem(itemId, num, false, -1, "관리기로 아이템 지급");
+					hp.getClient().getPlayer().dropMessage(1, "서버관리기로 부터 지정한 아이템 " + txtitemamount + " 개를 지급되었습니다.");
+					FileoutputUtil.log(FileoutputUtil.지급로그, "[" + FileoutputUtil.CurrentReadable_Time() + "] 계정ID : " + hp.getAccountID() + 
+						" / 캐릭터ID : " + hp.getId() + " / 캐릭터ID : " + txtname + " / 지급한 아이템 : " + itemId + " / 지급한 수량 : " + num + "");  
+					System.out.println(txtname + "님께 아이템을 지급했습니다.");                  
+				} else { // 인벤토리 부족하면
+					System.out.println(txtname + "님의 인벤토리가 부족하여 지급하지 못했습니다.");     
+				}       
+			}
+		}
+	}
+
+	// ...
+	
+}	
