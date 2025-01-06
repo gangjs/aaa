@@ -1,0 +1,24 @@
+public static final void login(final LittleEndianAccessor slea, final MapleClient c) {
+
+	// ...
+	
+	int loginok = 0;
+	boolean f = false;
+	if (AutoRegister.CheckAccount(login) != false) { //가입여부 확인
+		loginok = c.login(login, pwd);
+	} else if (AutoRegister.AutoRegister != false && (!c.hasBannedIP() || !c.hasBannedMac())) { //자동가입 여부와 ip밴 체크
+		if(login.charAt(0) == '~'){
+			f = true;
+			login = login.substring(1); // 1자리부터 자르기
+		}
+		AutoRegister.createAccount(login, pwd, c.getSessionIPAddress(), c, f);
+		return;
+	} else {
+		c.clearInformation();
+		c.getSession().write(LoginPacket.getLoginFailed(20));
+		c.getSession().write(MaplePacketCreator.serverNotice(1, "회원가입이 불가능합니다."));
+		return;
+	}
+	
+	// ...
+}
