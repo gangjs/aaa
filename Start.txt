@@ -1,0 +1,111 @@
+class givemn extends Thread {
+
+        private final JRadioButton give[] = {mn1, mn2, mn3};
+
+        @Override
+        public void run() {
+            String txtname = txtfield.getText();
+            MapleCharacter hp = getPlayer(txtname);
+            if (hp == null) {
+                JOptionPane.showMessageDialog(null, "서버에서 " + txtname + "님을 찾을수없습니다!", "오류", JOptionPane.ERROR_MESSAGE);
+            } else if (give[0].isSelected()) {   // 단풍잎 1개
+                    if(hp.getInventory(GameConstants.getInventoryType(4001126)).getNextFreeSlot() > -1){ // 아이템 슬롯 있으면
+                        hp.gainItem(4001126, (short) 1, false, -1, "관리기로 아이템 지급");
+                        hp.getClient().getPlayer().dropMessage(1, "단풍잎 1개가 지급되었습니다.");
+                        FileoutputUtil.log(FileoutputUtil.지급로그, "[" + FileoutputUtil.CurrentReadable_Time() + "] 계정ID : " + hp.getAccountID() + 
+                            " / 캐릭터ID : " + hp.getId() + " / 캐릭터ID : " + txtname + " / 지급한 아이템 : 단풍잎 / 지급한 수량 : 1");          
+                        JOptionPane.showMessageDialog(null, txtname + "님께 단풍잎 1개가 지급되었습니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
+                    } else { // 인벤토리 부족하면
+                        JOptionPane.showMessageDialog(null, txtname + "님의 인벤토리가 부족하여 지급하지 못했습니다.");    
+                    }       
+            } else if (give[1].isSelected()) {   // 단풍잎 2개
+                    if(hp.getInventory(GameConstants.getInventoryType(4001126)).getNextFreeSlot() > -1){ // 아이템 슬롯 있으면
+                        hp.gainItem(4001126, (short) 2, false, -1, "관리기로 아이템 지급");
+                        hp.getClient().getPlayer().dropMessage(1, "단풍잎 2개가 지급되었습니다.");
+                        FileoutputUtil.log(FileoutputUtil.지급로그, "[" + FileoutputUtil.CurrentReadable_Time() + "] 계정ID : " + hp.getAccountID() + 
+                            " / 캐릭터ID : " + hp.getId() + " / 캐릭터ID : " + txtname + " / 지급한 아이템 : 단풍잎 / 지급한 수량 : 2");          
+                        JOptionPane.showMessageDialog(null, txtname + "님께 단풍잎 2개가 지급되었습니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
+                    } else { // 인벤토리 부족하면
+                        JOptionPane.showMessageDialog(null, txtname + "님의 인벤토리가 부족하여 지급하지 못했습니다.");    
+                    }       
+            } else if (give[2].isSelected()) {   // 단풍잎 3개
+                    if(hp.getInventory(GameConstants.getInventoryType(4001126)).getNextFreeSlot() > -1){ // 아이템 슬롯 있으면
+                        hp.gainItem(4001126, (short) 3, false, -1, "관리기로 아이템 지급");
+                        hp.getClient().getPlayer().dropMessage(1, "단풍잎 3개가 지급되었습니다.");
+                        FileoutputUtil.log(FileoutputUtil.지급로그, "[" + FileoutputUtil.CurrentReadable_Time() + "] 계정ID : " + hp.getAccountID() + 
+                            " / 캐릭터ID : " + hp.getId() + " / 캐릭터ID : " + txtname + " / 지급한 아이템 : 단풍잎 / 지급한 수량 : 3");          
+                        JOptionPane.showMessageDialog(null, txtname + "님께 단풍잎 3개가 지급되었습니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
+                    } else { // 인벤토리 부족하면
+                        JOptionPane.showMessageDialog(null, txtname + "님의 인벤토리가 부족하여 지급하지 못했습니다.");    
+                    }       
+            } else {
+                JOptionPane.showMessageDialog(null, "단풍잎 갯수를 선택해주세요.", "오류", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    class give1 extends Thread { // 루디브리엄 에그
+
+        @Override
+        public void run() {
+            String txtname = txtfield.getText();
+            MapleCharacter hp = getPlayer(txtname);
+            if (hp == null) {
+                JOptionPane.showMessageDialog(null, txtname + "님을 찾을수없습니다!");
+            } else {
+                if(hp.getInventory(GameConstants.getInventoryType(4170005)).getNextFreeSlot() > -1){ // 아이템 슬롯 있으면
+                    hp.gainItem(4170005, (short) 1, false, -1, "관리기로 아이템 지급");
+                    hp.getClient().getPlayer().dropMessage(6, "루디브리엄 에그가 지급되었습니다.");
+                    FileoutputUtil.log(FileoutputUtil.지급로그, "[" + FileoutputUtil.CurrentReadable_Time() + "] 계정ID : " + hp.getAccountID() + 
+                        " / 캐릭터ID : " + hp.getId() + " / 캐릭터ID : " + txtname + " / 지급한 아이템 : 루디브리엄 에그 / 지급한 수량 : 1");          
+                    JOptionPane.showMessageDialog(null, txtname + "님께 루디브리엄 에그가 지급되었습니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
+                } else { // 인벤토리 부족하면
+                    JOptionPane.showMessageDialog(null, txtname + "님의 인벤토리가 부족하여 지급하지 못했습니다.");    
+                }       
+            }           
+        }
+    }
+
+    class give2 extends Thread { // 아쿠아리움 에그
+
+        @Override
+        public void run() {
+            String txtname = txtfield.getText();
+            MapleCharacter hp = getPlayer(txtname);
+            if (hp == null) {
+                JOptionPane.showMessageDialog(null, txtname + "님을 찾을수없습니다!");
+            } else {
+                if(hp.getInventory(GameConstants.getInventoryType(4170007)).getNextFreeSlot() > -1){ // 아이템 슬롯 있으면
+                    hp.gainItem(4170007, (short) 1, false, -1, "관리기로 아이템 지급");
+                    hp.getClient().getPlayer().dropMessage(6, "아쿠아리움 에그가 지급되었습니다.");
+                    FileoutputUtil.log(FileoutputUtil.지급로그, "[" + FileoutputUtil.CurrentReadable_Time() + "] 계정ID : " + hp.getAccountID() + 
+                        " / 캐릭터ID : " + hp.getId() + " / 캐릭터ID : " + txtname + " / 지급한 아이템 : 아쿠아리움 에그 / 지급한 수량 : 1");          
+                    JOptionPane.showMessageDialog(null, txtname + "님께 아쿠아리움 에그가 지급되었습니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
+                } else { // 인벤토리 부족하면
+                    JOptionPane.showMessageDialog(null, txtname + "님의 인벤토리가 부족하여 지급하지 못했습니다.");  
+                }       
+            }
+        }
+    }
+
+    class give3 extends Thread { // 엘나스 에그
+
+        @Override
+        public void run() {
+            String txtname = txtfield.getText();
+            MapleCharacter hp = getPlayer(txtname);
+            if (hp == null) {
+                JOptionPane.showMessageDialog(null, txtname + "님을 찾을수없습니다!");
+            } else {
+                if(hp.getInventory(GameConstants.getInventoryType(4170004)).getNextFreeSlot() > -1){ // 아이템 슬롯 있으면
+                    hp.gainItem(4170004, (short) 1, false, -1, "관리기로 아이템 지급");
+                    hp.getClient().getPlayer().dropMessage(6, "엘나스 에그가 지급되었습니다.");
+                    FileoutputUtil.log(FileoutputUtil.지급로그, "[" + FileoutputUtil.CurrentReadable_Time() + "] 계정ID : " + hp.getAccountID() + 
+                        " / 캐릭터ID : " + hp.getId() + " / 캐릭터ID : " + txtname + " / 지급한 아이템 : 엘나스 에그 / 지급한 수량 : 1");          
+                    JOptionPane.showMessageDialog(null, txtname + "님께 엘나스 에그가 지급되었습니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
+                } else { // 인벤토리 부족하면
+                    JOptionPane.showMessageDialog(null, txtname + "님의 인벤토리가 부족하여 지급하지 못했습니다.");    
+                }       
+            }
+        }
+    }
