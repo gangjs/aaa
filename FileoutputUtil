@@ -1,0 +1,39 @@
+public class FileoutputUtil {
+
+    // Logging output file
+    public static final String Acc_Stuck = "Log_AccountStuck.txt",
+            IP_Log = "접속로그/" + getDCurrentTime() + ".txt",
+            GMCommand_Log = "Log_GMCommand.rtf",
+            Zakum_Log = "Log_Zakum.rtf",
+            Login_Error = "Log_Login_Error.txt",
+            Pinkbean_Log = "Log_Pinkbean.txt",
+            ScriptEx_Log = "스크립트/" + getDCurrentTime() + ".txt",
+            PacketEx_Log = "서버로그/" + getDCurrentTime() + ".txt", // I cba looking for every error, adding this back in.
+            Donator_Log = "Log_Donator.txt",
+            Hacker_Log = "오토로그/" + getDCurrentTime() + ".txt",
+            LevelUp_Log = "렙업로그/" + getDCurrentTime() + ".txt",
+            채팅로그 = "채팅로그/" + getDCurrentTime() + ".txt",
+            교환로그 = "교환로그/" + getDCurrentTime() + ".txt",
+            고상로그 = "고상로그/" + getDCurrentTime() + ".txt",
+            안티핵툴 = "안티핵툴/" + getDCurrentTime() + ".txt",
+            AHT_Log = "AHT_Log/" + getDCurrentTime() + ".txt",
+            장비로그 = "장비로그/" + getDCurrentTime() + ".txt",
+            프로세스로그 = "프로세스로그/" + getDCurrentTime() + ".txt",
+            감지로그 = "감지로그/" + getDCurrentTime() + ".txt",
+            커넥터로그 = "커넥터로그/" + getDCurrentTime() + ".txt",
+            공지로그 = "공지로그/" + getDCurrentTime() + ".txt",
+            핵감지로그 = "핵감지로그/" + getDCurrentTime() + ".txt",
+            지급로그 = "지급로그/" + getDCurrentTime() + ".txt",
+            dllcheck_Log = "Log_DllCheck.txt",
+            CaptionHack_Log = "Log_CaptionHacker.txt",
+            ProcessHack_Log = "Log_ProcessHacker.txt",
+            Movement_Log = "Log_Movement.txt",
+            MemEdit_Log = "Log_MemoryEdit.txt", //CommandEx_Log = "Log_Command_Except.txt",
+            packetHack_Log = "Log_PacketHack.txt"
+            //PQ_Log = "Log_PQ.rtf"
+            ;
+
+
+	....
+
+}
