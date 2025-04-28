@@ -1,0 +1,9 @@
+public class MapleCharacter extends AnimatedMapleMapObject implements Serializable {
+
+	...
+
+	private boolean autostatus = true; 
+   	// private boolean autostatus = false; // 오토루팅 비활성화 
+
+	...
+}
