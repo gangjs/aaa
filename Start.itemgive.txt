@@ -1,0 +1,28 @@
+class itemgive extends Thread {
+
+        @Override
+        public void run() {
+            String txtname = txtfield1.getText();
+            String txtitemgive = txtfield2.getText();
+            String txtitemamount = txtfield3.getText();
+            int itemId = Integer.parseInt(txtitemgive);
+            short num = Short.parseShort(txtitemamount);
+            MapleCharacter hp = getPlayer(txtname);
+
+            if (hp == null) {
+                JOptionPane.showMessageDialog(null, "서버에서 " + txtname + "님을 찾을수없습니다!", "오류", JOptionPane.ERROR_MESSAGE);
+            } else {
+                if(hp.getInventory(GameConstants.getInventoryType(itemId)).getNextFreeSlot() > -1){ // 아이템 슬롯 있으면
+                    // client c로 되어있어서 오류났던거 getPlayer로 교체
+                    hp.gainItem(itemId, num, false, -1, "관리기로 아이템 지급");
+                    hp.getClient().getPlayer().dropMessage(1, "서버관리기로 부터 지정한 아이템 " + txtitemamount + " 개를 지급되었습니다.");
+                    FileoutputUtil.log(FileoutputUtil.지급로그, "[" + FileoutputUtil.CurrentReadable_Time() + "] 계정ID : " + hp.getAccountID() + 
+                        " / 캐릭터ID : " + hp.getId() + " / 캐릭터ID : " + txtname + " / 지급한 아이템 : " + itemId + " / 지급한 수량 : " + num + "");  
+                    System.out.println(txtname + "님께 아이템을 지급했습니다."); // 콘솔
+                    JOptionPane.showMessageDialog(null, txtname + "님께 아이템을 지급했습니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
+                } else { // 인벤토리 부족하면
+                    System.out.println(txtname + "님의 인벤토리가 부족하여 지급하지 못했습니다.");     
+                }       
+            }
+        }
+    }
