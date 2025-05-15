@@ -1,0 +1,33 @@
+switch (apfrom) { // AP to
+
+...
+
+	// HpApUsed 남아있으면 MP낮추고 다른 스텟 올리는 행위 금지
+	case 8192: // MP
+		/*
+		int maxmp = playerst.getMaxMp();
+		if (job == 0) { // Beginner
+		maxmp -= 8;
+		} else if (job >= 100 && job <= 132) { // Warrior
+		maxmp -= 4;
+		} else if (job >= 200 && job <= 232) { // Magician
+		Skill improvingMaxMP = SkillFactory.getSkill(2000001);
+		int improvingMaxMPLevel = c.getPlayer().getSkillLevel(improvingMaxMP);
+		maxmp -= 20;
+		if (improvingMaxMPLevel >= 1) {
+			maxmp -= improvingMaxMP.getEffect(improvingMaxMPLevel).getY();
+		}
+		} else if ((job >= 500 && job <= 522) || (job >= 300 && job <= 322) || (job >= 400 && job <= 434)) { // Pirate, Bowman. Thief
+		maxmp -= 10;
+		}
+		c.getPlayer().setHpApUsed((short) (c.getPlayer().getHpApUsed() - 1));
+		// HpApUsed db에서 가져오는 부분
+		playerst.setMaxMp(maxmp, c.getPlayer());
+		statupdate.put(MapleStat.MAXMP, (int) maxmp);
+		break;
+		*/
+		used = false;
+		c.getPlayer().dropMessage(1, "피작은 허용되지 않습니다.");
+		break;                            
+}
+
