@@ -1,0 +1,34 @@
+public static void handleCooldowns(final MapleCharacter chr, final int numTimes, final boolean hurt, final long now) { //is putting it here a good idea? expensive?
+        // 거탐 시간체크
+        if (chr.LieDetectorTime > 0) {
+            chr.LieDetectorTime = chr.LieDetectorTime - 1;
+        }
+        
+        // 안단테 기존 에그 삭제 드랍으로 교체
+        /*
+        if (chr.eggtime > 0) {
+            chr.eggtime = chr.eggtime - 1;
+        } else {
+            chr.eggtime = 600;
+            chr.dropMessage(6, "10분 경과 - 피그미 에그(루디브리엄) 지급");
+            chr.gainItem(4170005, (short)1, false, -1, "접속보상");
+        }
+        // 주사위 명령어 삭제
+        if (chr.DiceCooltime > 0) {
+            chr.DiceCooltime = chr.DiceCooltime - 1;
+        }
+        */
+       
+        chr.Movetime++;
+        // chr.dropMessage(6, "Movetime debug" + chr.Movetime);
+        
+        /*
+        int whereareyou = chr.getMapId();
+        if(whereareyou >=270020000 && whereareyou <=279990000 && (chr.getJob() == 232 || chr.getJob() == 231) && chr.getLevel() < 120 ){
+            chr.dropMessage(6, "120 미만 프리스트(비숍)는 후회~망각의길에 갈 수 없습니다.");
+            chr.warp(270000000);
+        }        
+        */
+
+...
+}
