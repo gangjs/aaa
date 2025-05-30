@@ -1,0 +1,27 @@
+public static final void Loggedin(final int playerid, final MapleClient c) {
+	
+	...
+
+	for (Item item : c.getPlayer().getInventory(MapleInventoryType.EQUIP)) {
+		if (item.getExpiration() > 0) {
+			if (((item.getExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000)) > 24) {
+				player.dropMessage(5, MapleItemInformationProvider.getInstance().getName(item.getItemId())+" 아이템의 기간이 "+((item.getExpiration() - System.currentTimeMillis()) / (24 * 60 * 60 * 1000))+"일 남았습니다.");
+			} else {
+			  player.dropMessage(5, MapleItemInformationProvider.getInstance().getName(item.getItemId())+" 아이템의 기간이 "+((item.getExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000))+"시간 남았습니다.");
+			}
+		}
+	}
+	 
+	for (Item item : c.getPlayer().getInventory(MapleInventoryType.SETUP)) {
+		if (item.getExpiration() > 0) {
+			if (((item.getExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000)) > 24) {
+				player.dropMessage(5, MapleItemInformationProvider.getInstance().getName(item.getItemId())+" 아이템의 기간이 "+((item.getExpiration() - System.currentTimeMillis()) / (24 * 60 * 60 * 1000))+"일 남았습니다.");
+			} else {
+			  player.dropMessage(5, MapleItemInformationProvider.getInstance().getName(item.getItemId())+" 아이템의 기간이 "+((item.getExpiration() - System.currentTimeMillis()) / (60 * 60 * 1000))+"시간 남았습니다.");
+			}
+		}
+	}
+	 
+	player.getStat().recalcLocalStats(false, player);
+	
+}
