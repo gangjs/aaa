@@ -1,0 +1,435 @@
+/*
+// 기존 안단테
+public final Item scrollEquipWithId(final Item equip, final Item scrollId, final boolean ws, final MapleCharacter chr, final int vegas) {
+	if (equip.getType() == 1) { // See Item.java
+		short hpmp100 = 10;
+		short hpmp60 = 20;
+		short hpmp10 = 50;
+		short def100 = 1;
+		short def60 = 2;
+		short def10 = 5;
+		short acc100 = 1;
+		short acc60 = 2;
+		short acc10 = 4;
+		short avd100 = 2;
+		short avd60 = 4;
+		short avd10 = 9;
+		final Equip nEquip = (Equip) equip;
+		final Map<String, Integer> stats = getEquipStats(scrollId.getItemId());
+		final Map<String, Integer> eqstats = getEquipStats(equip.getItemId());
+		final int succ = (GameConstants.isTablet(scrollId.getItemId()) ? GameConstants.getSuccessTablet(scrollId.getItemId(), nEquip.getLevel()) : ((GameConstants.isEquipScroll(scrollId.getItemId()) || GameConstants.isPotentialScroll(scrollId.getItemId()) || !stats.containsKey("success") ? 0 : stats.get("success"))));
+		final int curse = (GameConstants.isTablet(scrollId.getItemId()) ? GameConstants.getCurseTablet(scrollId.getItemId(), nEquip.getLevel()) : ((GameConstants.isEquipScroll(scrollId.getItemId()) || GameConstants.isPotentialScroll(scrollId.getItemId()) || !stats.containsKey("cursed") ? 0 : 30)));
+		int success = succ + (vegas == 5610000 && succ == 10 ? 20 : (vegas == 5610001 && succ == 60 ? 30 : 0));
+		if (ItemFlag.LUCKS_KEY.check(equip.getFlag()) && !GameConstants.isPotentialScroll(scrollId.getItemId()) && !GameConstants.isEquipScroll(scrollId.getItemId()) && !GameConstants.isSpecialScroll(scrollId.getItemId())) {
+			equip.setFlag((short) (equip.getFlag() - ItemFlag.LUCKS_KEY.getValue()));
+		}
+		
+		// 주문서가 너무 풀리면 조절하자
+//             if (success == 60) { // 주문서 확률
+//             success = (success - 5);
+//             }
+//             if (success == 70) { // 주문서 확률ㅍ
+//             success = (success - 5);
+//             }
+//             if (success == 30) { // 주문서 확률
+//             success = (success - 5);
+//             }
+//            if(scrollId.getItemId()==2040804){ // 장공 60퍼
+//                success = (success - 8);
+//            }
+
+		if (GameConstants.isPotentialScroll(scrollId.getItemId()) || GameConstants.isEquipScroll(scrollId.getItemId()) || GameConstants.isSpecialScroll(scrollId.getItemId()) || Randomizer.nextInt(100) <= success || chr.isGM()) {
+			switch (scrollId.getItemId()) {
+				case 2049000:
+				case 2049001:
+				case 2049002:
+				case 2049003:
+				case 2049004:
+				case 2049005: {
+					if (eqstats.containsKey("tuc") && nEquip.getLevel() + nEquip.getUpgradeSlots() < eqstats.get("tuc")) {
+						nEquip.setUpgradeSlots((byte) (nEquip.getUpgradeSlots() + 1));
+					}
+					break;
+				}
+				case 2049006:
+				case 2049007:
+				case 2049008: {
+					if (eqstats.containsKey("tuc") && nEquip.getLevel() + nEquip.getUpgradeSlots() < eqstats.get("tuc")) {
+						nEquip.setUpgradeSlots((byte) (nEquip.getUpgradeSlots() + 2));
+					}
+					break;
+				}
+				case 2040727: // Spikes on shoe, prevents slip
+				{
+					short flag = nEquip.getFlag();
+					flag |= ItemFlag.SPIKES.getValue();
+					nEquip.setFlag(flag);
+					break;
+				}
+				case 2041058: // Cape for Cold protection
+				{
+					short flag = nEquip.getFlag();
+					flag |= ItemFlag.COLD.getValue();
+					nEquip.setFlag(flag);
+					break;
+				}
+				case 5063000:
+				case 2530000:
+				case 2530001: {
+					short flag = nEquip.getFlag();
+					flag |= ItemFlag.LUCKS_KEY.getValue();
+					nEquip.setFlag(flag);
+					break;
+				}
+				case 5064000:
+				case 2531000: {
+					short flag = nEquip.getFlag();
+					flag |= ItemFlag.SHIELD_WARD.getValue();
+					nEquip.setFlag(flag);
+					break;
+				}
+				default: {
+					if (GameConstants.isChaosScroll(scrollId.getItemId())) {
+						final int z = GameConstants.getChaosNumber(scrollId.getItemId());
+						if (nEquip.getStr() > 0) {
+							nEquip.setStr((short) (nEquip.getStr() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+						}
+						if (nEquip.getDex() > 0) {
+							nEquip.setDex((short) (nEquip.getDex() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+						}
+						if (nEquip.getInt() > 0) {
+							nEquip.setInt((short) (nEquip.getInt() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+						}
+						if (nEquip.getLuk() > 0) {
+							nEquip.setLuk((short) (nEquip.getLuk() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+						}
+						if (nEquip.getWatk() > 0) {
+							nEquip.setWatk((short) (nEquip.getWatk() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+						}
+						if (nEquip.getWdef() > 0) {
+							nEquip.setWdef((short) (nEquip.getWdef() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+						}
+						if (nEquip.getMatk() > 0) {
+							nEquip.setMatk((short) (nEquip.getMatk() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+						}
+						if (nEquip.getMdef() > 0) {
+							nEquip.setMdef((short) (nEquip.getMdef() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+						}
+						if (nEquip.getAcc() > 0) {
+							nEquip.setAcc((short) (nEquip.getAcc() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+						}
+						if (nEquip.getAvoid() > 0) {
+							nEquip.setAvoid((short) (nEquip.getAvoid() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+						}
+						if (nEquip.getSpeed() > 0) {
+							nEquip.setSpeed((short) (nEquip.getSpeed() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+						}
+						if (nEquip.getJump() > 0) {
+							nEquip.setJump((short) (nEquip.getJump() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+						}
+						if (nEquip.getHp() > 0) {
+							nEquip.setHp((short) (nEquip.getHp() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+						}
+						if (nEquip.getMp() > 0) {
+							nEquip.setMp((short) (nEquip.getMp() + Randomizer.nextInt(z) * (Randomizer.nextBoolean() ? 1 : -1)));
+						}
+						break;
+					} else if (GameConstants.isEquipScroll(scrollId.getItemId())) {
+						final int chanc = Math.max((scrollId.getItemId() == 2049300 || scrollId.getItemId() == 2049303 ? 100 : (scrollId.getItemId() == 2049305 ? 60 : 80)) - (nEquip.getEnhance() * 10), 10);
+						if (Randomizer.nextInt(100) > chanc) {
+							return null; //destroyed, nib
+						}
+						for (int i = 0; i < (scrollId.getItemId() == 2049305 ? 4 : (scrollId.getItemId() == 2049304 ? 3 : 1)); i++) {
+							if (nEquip.getStr() > 0 || Randomizer.nextInt(50) == 1) { //1/50
+								nEquip.setStr((short) (nEquip.getStr() + Randomizer.nextInt(5)));
+							}
+							if (nEquip.getDex() > 0 || Randomizer.nextInt(50) == 1) { //1/50
+								nEquip.setDex((short) (nEquip.getDex() + Randomizer.nextInt(5)));
+							}
+							if (nEquip.getInt() > 0 || Randomizer.nextInt(50) == 1) { //1/50
+								nEquip.setInt((short) (nEquip.getInt() + Randomizer.nextInt(5)));
+							}
+							if (nEquip.getLuk() > 0 || Randomizer.nextInt(50) == 1) { //1/50
+								nEquip.setLuk((short) (nEquip.getLuk() + Randomizer.nextInt(5)));
+							}
+							if (nEquip.getWatk() > 0 && GameConstants.isWeapon(nEquip.getItemId())) {
+								nEquip.setWatk((short) (nEquip.getWatk() + Randomizer.nextInt(5)));
+							}
+							if (nEquip.getWdef() > 0 || Randomizer.nextInt(40) == 1) { //1/40
+								nEquip.setWdef((short) (nEquip.getWdef() + Randomizer.nextInt(5)));
+							}
+							if (nEquip.getMatk() > 0 && GameConstants.isWeapon(nEquip.getItemId())) {
+								nEquip.setMatk((short) (nEquip.getMatk() + Randomizer.nextInt(5)));
+							}
+							if (nEquip.getMdef() > 0 || Randomizer.nextInt(40) == 1) { //1/40
+								nEquip.setMdef((short) (nEquip.getMdef() + Randomizer.nextInt(5)));
+							}
+							if (nEquip.getAcc() > 0 || Randomizer.nextInt(20) == 1) { //1/20
+								nEquip.setAcc((short) (nEquip.getAcc() + Randomizer.nextInt(5)));
+							}
+							if (nEquip.getAvoid() > 0 || Randomizer.nextInt(20) == 1) { //1/20
+								nEquip.setAvoid((short) (nEquip.getAvoid() + Randomizer.nextInt(5)));
+							}
+							if (nEquip.getSpeed() > 0 || Randomizer.nextInt(10) == 1) { //1/10
+								nEquip.setSpeed((short) (nEquip.getSpeed() + Randomizer.nextInt(5)));
+							}
+							if (nEquip.getJump() > 0 || Randomizer.nextInt(10) == 1) { //1/10
+								nEquip.setJump((short) (nEquip.getJump() + Randomizer.nextInt(5)));
+							}
+							if (nEquip.getHp() > 0 || Randomizer.nextInt(5) == 1) { //1/5
+								nEquip.setHp((short) (nEquip.getHp() + Randomizer.nextInt(5)));
+							}
+							if (nEquip.getMp() > 0 || Randomizer.nextInt(5) == 1) { //1/5
+								nEquip.setMp((short) (nEquip.getMp() + Randomizer.nextInt(5)));
+							}
+							nEquip.setEnhance((byte) (nEquip.getEnhance() + 1));
+						}
+						break;
+					} else if( scrollId.getItemId()>=2040000 && 2041041>=scrollId.getItemId() ) {
+						switch(scrollId.getItemId()){
+							case 2040000: // 투방투체100퍼
+							case 2040003:
+								case 2040400://상의
+								case 2040420:
+								case 2040620://하의
+								case 2040503://전갑
+								case 2040600://하방
+								case 2040900://방패
+								case 2040926:
+								case 2041000://망토
+								case 2041003:
+								case 2041006:
+								case 2041009:
+								nEquip.setWdef((short) (nEquip.getWdef() + def100));
+								nEquip.setMdef((short) (nEquip.getMdef() +  def100));
+								nEquip.setHp((short) (nEquip.getHp() + hpmp100));
+								nEquip.setMp((short) (nEquip.getMp() + hpmp100));
+								break;
+							case 2040001: // 투방투체60퍼
+							case 2040004:
+								case 2040008:
+								case 2040010:
+								case 2040401://상의
+								case 2040404:
+								case 2040408:
+								case 2040421:
+								case 2040504://전갑
+								case 2040510:
+								case 2040601://하방
+								case 2040621://하의
+								case 2040604:
+								case 2040608:
+								case 2040901://방패
+								case 2040927:
+								case 2040904:
+								case 2040908:
+								case 2041001:
+								case 2041004:
+								case 2041007:
+								case 2041010:
+								case 2041026:
+								case 2041028:
+								case 2041030:
+								case 2041032:
+								nEquip.setAcc((short) (nEquip.getAcc() + acc100));
+								nEquip.setWdef((short) (nEquip.getWdef() + def60));
+								nEquip.setMdef((short) (nEquip.getMdef() +  def60));
+								nEquip.setHp((short) (nEquip.getHp() + hpmp60));
+								nEquip.setMp((short) (nEquip.getMp() + hpmp60));
+								break;
+							case 2040002: // 투방투체10퍼
+							case 2040005:
+								case 2040006:
+								case 2040007:
+								case 2040009:
+								case 2040011:
+								case 2040402://상의
+								case 2040403:
+								case 2040405:
+								case 2040409:
+								case 2040422:
+								case 2040505://전갑
+								case 2040507:
+								case 2040511:
+								case 2040602://하방
+								case 2040603:
+								case 2040605:
+								case 2040609:
+								case 2040622://하의
+								case 2040902://방페
+								case 2040928:
+								case 2040903:
+								case 2040905:
+								case 2040909:
+								case 2041002:
+								case 2041005:
+								case 2041008:
+								case 2041011:
+								case 2041024:
+								case 2041025:
+								case 2041027:
+								case 2041029:
+								case 2041031:
+								case 2041033:
+								 nEquip.setAcc((short) (nEquip.getAcc() + acc100));
+								 nEquip.setAvoid((short) (nEquip.getAvoid() + avd100));
+								nEquip.setWdef((short) (nEquip.getWdef() + def10));
+								nEquip.setMdef((short) (nEquip.getMdef() +  def10));
+								nEquip.setHp((short) (nEquip.getHp() + hpmp10));
+								nEquip.setMp((short) (nEquip.getMp() + hpmp10));
+								break;
+								case 2040700: //신민(회피명중)
+									nEquip.setWdef((short) (nEquip.getWdef() + def100));
+									nEquip.setMdef((short) (nEquip.getMdef() +  def100));
+									nEquip.setAcc((short) (nEquip.getAcc() + acc100));
+									nEquip.setAvoid((short) (nEquip.getAvoid() + avd100));
+								 break;
+								case 2040701: //신민(회피명중)
+								case 2040712:
+									nEquip.setWdef((short) (nEquip.getWdef() + def60));
+									nEquip.setMdef((short) (nEquip.getMdef() +  def60));
+									nEquip.setAcc((short) (nEquip.getAcc() + acc60));
+									nEquip.setAvoid((short) (nEquip.getAvoid() + avd60));
+									nEquip.setJump((short) (nEquip.getJump() + 1));
+								break;
+								case 2040702: //신민(회피명중)
+								case 2040709:
+								case 2040713:
+									nEquip.setWdef((short) (nEquip.getWdef() + def10));
+									nEquip.setMdef((short) (nEquip.getMdef() +  def10));
+									nEquip.setAcc((short) (nEquip.getAcc() + acc10));
+									nEquip.setAvoid((short) (nEquip.getAvoid() + avd10));
+								 nEquip.setJump((short) (nEquip.getJump() + 1));
+								 nEquip.setSpeed((short) (nEquip.getSpeed() + 1));
+								break;
+								case 2040800: //장민
+								case 2040823:
+								nEquip.setWdef((short) (nEquip.getWdef() + def100));
+								nEquip.setMdef((short) (nEquip.getMdef() +  def100));
+								nEquip.setHp((short) (nEquip.getHp() + hpmp100));
+								nEquip.setMp((short) (nEquip.getMp() + hpmp100));
+								nEquip.setAcc((short) (nEquip.getAcc() + acc100));
+								break;
+								case 2040801:
+								case 2040808:
+								case 2040812:
+								case 2040824
+										:
+								nEquip.setWdef((short) (nEquip.getWdef() + def60));
+								nEquip.setMdef((short) (nEquip.getMdef() +  def60));
+								nEquip.setHp((short) (nEquip.getHp() + hpmp60));
+								nEquip.setMp((short) (nEquip.getMp() + hpmp60));
+								nEquip.setAcc((short) (nEquip.getAcc() + acc60));
+								nEquip.setDex((short) (nEquip.getDex() + 2));
+								break;
+								case 2040802:
+								case 2040806:
+								case 2040809:
+								case 2040813:
+								case 2040825:
+									nEquip.setWdef((short) (nEquip.getWdef() + def10));
+									nEquip.setMdef((short) (nEquip.getMdef() +  def10));
+									nEquip.setHp((short) (nEquip.getHp() + hpmp10));
+									nEquip.setMp((short) (nEquip.getMp() + hpmp10));
+									nEquip.setAcc((short) (nEquip.getAcc() + acc10));
+									nEquip.setAvoid((short) (nEquip.getAvoid() + avd60));
+									nEquip.setDex((short) (nEquip.getDex() + 5));
+								 break;
+								default:
+								for (Entry<String, Integer> stat : stats.entrySet()) {
+							final String key = stat.getKey();
+
+							if (key.equals("STR")) {
+								nEquip.setStr((short) (nEquip.getStr() + stat.getValue().intValue()));
+							} else if (key.equals("DEX")) {
+								nEquip.setDex((short) (nEquip.getDex() + stat.getValue().intValue()));
+							} else if (key.equals("INT")) {
+								nEquip.setInt((short) (nEquip.getInt() + stat.getValue().intValue()));
+							} else if (key.equals("LUK")) {
+								nEquip.setLuk((short) (nEquip.getLuk() + stat.getValue().intValue()));
+							} else if (key.equals("PAD")) {
+								nEquip.setWatk((short) (nEquip.getWatk() + stat.getValue().intValue()));
+							} else if (key.equals("PDD")) {
+								nEquip.setWdef((short) (nEquip.getWdef() + stat.getValue().intValue()));
+							} else if (key.equals("MAD")) {
+								nEquip.setMatk((short) (nEquip.getMatk() + stat.getValue().intValue()));
+							} else if (key.equals("MDD")) {
+								nEquip.setMdef((short) (nEquip.getMdef() + stat.getValue().intValue()));
+							} else if (key.equals("ACC")) {
+								nEquip.setAcc((short) (nEquip.getAcc() + stat.getValue().intValue()));
+							} else if (key.equals("EVA")) {
+								nEquip.setAvoid((short) (nEquip.getAvoid() + stat.getValue().intValue()));
+							} else if (key.equals("Speed")) {
+								nEquip.setSpeed((short) (nEquip.getSpeed() + stat.getValue().intValue()));
+							} else if (key.equals("Jump")) {
+								nEquip.setJump((short) (nEquip.getJump() + stat.getValue().intValue()));
+							} else if (key.equals("MHP")) {
+								nEquip.setHp((short) (nEquip.getHp() + stat.getValue().intValue()));
+							} else if (key.equals("MMP")) {
+								nEquip.setMp((short) (nEquip.getMp() + stat.getValue().intValue()));
+							} else if (key.equals("MHPr")) {
+								nEquip.setHpR((short) (nEquip.getHpR() + stat.getValue().intValue()));
+							} else if (key.equals("MMPr")) {
+								nEquip.setMpR((short) (nEquip.getMpR() + stat.getValue().intValue()));
+							}
+						}
+								
+						}
+					} else {
+						for (Entry<String, Integer> stat : stats.entrySet()) {
+							final String key = stat.getKey();
+
+							if (key.equals("STR")) {
+								nEquip.setStr((short) (nEquip.getStr() + stat.getValue().intValue()));
+							} else if (key.equals("DEX")) {
+								nEquip.setDex((short) (nEquip.getDex() + stat.getValue().intValue()));
+							} else if (key.equals("INT")) {
+								nEquip.setInt((short) (nEquip.getInt() + stat.getValue().intValue()));
+							} else if (key.equals("LUK")) {
+								nEquip.setLuk((short) (nEquip.getLuk() + stat.getValue().intValue()));
+							} else if (key.equals("PAD")) {
+								nEquip.setWatk((short) (nEquip.getWatk() + stat.getValue().intValue()));
+							} else if (key.equals("PDD")) {
+								nEquip.setWdef((short) (nEquip.getWdef() + stat.getValue().intValue()));
+							} else if (key.equals("MAD")) {
+								nEquip.setMatk((short) (nEquip.getMatk() + stat.getValue().intValue()));
+							} else if (key.equals("MDD")) {
+								nEquip.setMdef((short) (nEquip.getMdef() + stat.getValue().intValue()));
+							} else if (key.equals("ACC")) {
+								nEquip.setAcc((short) (nEquip.getAcc() + stat.getValue().intValue()));
+							} else if (key.equals("EVA")) {
+								nEquip.setAvoid((short) (nEquip.getAvoid() + stat.getValue().intValue()));
+							} else if (key.equals("Speed")) {
+								nEquip.setSpeed((short) (nEquip.getSpeed() + stat.getValue().intValue()));
+							} else if (key.equals("Jump")) {
+								nEquip.setJump((short) (nEquip.getJump() + stat.getValue().intValue()));
+							} else if (key.equals("MHP")) {
+								nEquip.setHp((short) (nEquip.getHp() + stat.getValue().intValue()));
+							} else if (key.equals("MMP")) {
+								nEquip.setMp((short) (nEquip.getMp() + stat.getValue().intValue()));
+							} else if (key.equals("MHPr")) {
+								nEquip.setHpR((short) (nEquip.getHpR() + stat.getValue().intValue()));
+							} else if (key.equals("MMPr")) {
+								nEquip.setMpR((short) (nEquip.getMpR() + stat.getValue().intValue()));
+							}
+						}
+						break;
+					}
+				}
+			}
+			if (!GameConstants.isCleanSlate(scrollId.getItemId()) && !GameConstants.isSpecialScroll(scrollId.getItemId()) && !GameConstants.isEquipScroll(scrollId.getItemId()) && !GameConstants.isPotentialScroll(scrollId.getItemId())) {
+				nEquip.setUpgradeSlots((byte) (nEquip.getUpgradeSlots() - 1));
+				nEquip.setLevel((byte) (nEquip.getLevel() + 1));
+			}
+		} else {
+			if (!ws && !GameConstants.isCleanSlate(scrollId.getItemId()) && !GameConstants.isSpecialScroll(scrollId.getItemId()) && !GameConstants.isEquipScroll(scrollId.getItemId()) && !GameConstants.isPotentialScroll(scrollId.getItemId())) {
+				nEquip.setUpgradeSlots((byte) (nEquip.getUpgradeSlots() - 1));
+			}
+			if (Randomizer.nextInt(99) < curse) {
+				return null;
+			}
+		}
+	}
+	return equip;
+}
+*/
