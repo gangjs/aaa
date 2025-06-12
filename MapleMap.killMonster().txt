@@ -3,29 +3,29 @@ public final void killMonster(final MapleMonster monster, final MapleCharacter c
 	...
 	
 	Calendar cal = Calendar.getInstance();
-        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-        // 몬스터 등록 부분
-        if (chr.getQuestNAdd(MapleQuest.getInstance(monster.getId())).getCustomData() == null) {
-            chr.getQuestNAdd(MapleQuest.getInstance(monster.getId())).setCustomData("0");
-        } else if ("0".equals(chr.getQuestNAdd(MapleQuest.getInstance(monster.getId())).getCustomData())) {
-            int ran = 0;
-            if (monster.getStats().isBoss()) {
-                ran = (int) (Math.random() * 75 + 1);
-            }else if (dayOfWeek == 6) { // 금요일 보너스
-                ran = (int) (Math.random() * 400 + 1);
-            } else {
-                ran = (int) (Math.random() * 500 + 1);
-            }
-            if (ran == 5) {
-                broadcastMessage(MaplePacketCreator.getScrollEffect3(chr.getId()));
-                chr.dropMessage(6, getMobName(monster.getId()) + " 몬스터 등록 성공");
-                //chr.modifyCSPoints(1, 1000, false); // 캐시 지급 제거
-                World.Broadcast.broadcastMessage(MaplePacketCreator.serverNotice(6, chr.getName() + "님께서 " + getMobName(monster.getId()) + " 몬스터 등록에 성공하셨습니다."));
-                //chr.setmbook(chr.getmbook()+1);
-                chr.getQuestNAdd(MapleQuest.getInstance(monster.getId())).setCustomData("등록");
-            }
-        }
-
+	int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+	// 몬스터 등록 부분
+	if (chr.getQuestNAdd(MapleQuest.getInstance(monster.getId())).getCustomData() == null) {
+		chr.getQuestNAdd(MapleQuest.getInstance(monster.getId())).setCustomData("0");
+	} else if ("0".equals(chr.getQuestNAdd(MapleQuest.getInstance(monster.getId())).getCustomData())) {
+		int ran = 0;
+		if (monster.getStats().isBoss()) { // 보스 5%
+			ran = (int) (Math.random() * 20 + 1); 
+		}else if (dayOfWeek >= 6) { // 일반몹 금요일, 토요일 0.625%
+			ran = (int) (Math.random() * 160 + 1);
+		} else { // 나머지요일 0.5%
+			ran = (int) (Math.random() * 200 + 1);
+		}
+		if (ran == 5) {
+			broadcastMessage(MaplePacketCreator.getScrollEffect3(chr.getId()));
+			chr.dropMessage(6, getMobName(monster.getId()) + " 몬스터 등록 성공");
+			//chr.modifyCSPoints(1, 1000, false); // 캐시 지급 제거
+			World.Broadcast.broadcastMessage(MaplePacketCreator.serverNotice(6, chr.getName() + "님께서 " + getMobName(monster.getId()) + " 몬스터 등록에 성공하셨습니다."));
+			//chr.setmbook(chr.getmbook()+1);
+			chr.getQuestNAdd(MapleQuest.getInstance(monster.getId())).setCustomData("등록");
+		}
+	}
+	
 	...
 	
 }	
