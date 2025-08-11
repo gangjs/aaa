@@ -1,0 +1,12 @@
+ public static boolean drop(final MapleClient c, MapleInventoryType type, final short src, short quantity, final boolean npcInduced) {
+
+  ...
+
+  //반지 못버리게
+  if (source.getItemId() == 1112402 || source.getItemId() == 1112403 || source.getItemId() == 1112404 || source.getItemId() == 1112406) {
+      c.getSession().write(MaplePacketCreator.enableActions());
+      return false;
+  }
+
+  ...
+}
