@@ -1,0 +1,10 @@
+<!--
+기존 소스
+DownloadUIAddress="http://avatar.mabinogi.jp/ui/"
+UploadUIPage="http://avatar.mabinogi.jp/UiUpload.asp"
+BookContentsAddress="http://patch.mabinogi.jp/book/japan/"
+-->
+
+DownloadUIAddress="http://127.0.0.1/ui/"
+UploadUIPage="http://127.0.0.1/UiUpload.php"
+BookContentsAddress="http://localhost:9403/Data/korea/"
