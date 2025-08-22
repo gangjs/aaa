@@ -1,0 +1,29 @@
+////////////////////////////////////////////////////////////////////////////////
+server bool CheckValidate(
+	dungeon _dungeon) 
+// : 이 던전에 필요한 인원이 유지되고 있는지 체크하여 리턴한다.
+////////////////////////////////////////////////////////////////////////////////
+{
+	object_list cMemberList = _dungeon.GetRPMemberList();
+
+	// 이 던전은 반드시 3명이 와야 한다.
+	// if (cMemberList.GetSize() == 3)
+	// 인원 1명 이상으로 수정
+	if (cMemberList.GetSize() >= 1)
+	{
+		return true;
+	}
+
+	object_list	cCharList = _dungeon.GetPlayerList();
+	character	cChar;
+	int		i;
+
+	//인원이 맞지 않으면 각각 쫓아내고, 종료컷신을 틀어준다.
+	for (i = 0; i < cCharList.GetSize();  i++)
+	{
+		cChar = (character)cCharList.GetValue(i);
+		cChar.PlayCutScene(`G1_LeaveDungeon`);
+	}
+
+	return false;
+}
