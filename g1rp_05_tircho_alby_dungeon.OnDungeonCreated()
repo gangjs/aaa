@@ -1,0 +1,23 @@
+////////////////////////////////////////////////////////////////////////////////
+server void OnDungeonCreated(
+	dungeon _dungeon,
+	object_list _char_list)
+// : 던전이 생성되었을 때 캐릭터들의 진입 처리 등을 해준다.
+////////////////////////////////////////////////////////////////////////////////
+{
+	// 이 던전은 반드시 3명이 와야 한다.
+	if (_char_list.GetSize() == 3)
+	{
+		// 각각의 Role을 입력한다. (object_list의 첫번째 놈이 파티장이다.)
+		_dungeon.SetPlayerRole((character)_char_list.GetValue(0), `#tarlach`, true);  // rp-leader로 등록하는 것
+		_dungeon.SetPlayerRole((character)_char_list.GetValue(1), `#mari`);
+		_dungeon.SetPlayerRole((character)_char_list.GetValue(2), `#ruairi`);
+	}
+	// 아래 추가부분
+	else if (_char_list.GetSize() == 1)
+	{
+		// 각각의 Role을 입력한다. (object_list의 첫번째 놈이 파티장이다.)
+		_dungeon.SetPlayerRole((character)_char_list.GetValue(0), `#tarlach`, true);  // rp-leader로 등록하는 것
+	}
+
+}
