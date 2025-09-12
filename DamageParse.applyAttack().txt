@@ -1,0 +1,53 @@
+public static void applyAttack(final AttackInfo attack, final Skill theSkill, final MapleCharacter player, int attackCount, final double maxDamagePerMonster, final MapleStatEffect effect, final AttackType attack_type) {
+
+	...
+
+                    if (monsterstats.getOnlyNoramlAttack()) {
+                            eachd = attack.skill != 0 ? 0 : Math.min(eachd, (int) maxDamagePerHit);  // Convert to server calculated damage
+                        } // else if (!player.isGM()) {                                         
+                        else if (!player.isGM() && player.getId() != 1) { // accountId 1 내 캐릭 제외
+                            // 위 주석부분이 원본 아래 맥뎀 처리
+                            if ((!monster.isBuffed(MonsterStatus.WEAPON_DAMAGE_REFLECT) && !monster.isBuffed(MonsterStatus.DAMAGE_IMMUNITY) && !monster.isBuffed(MonsterStatus.WEAPON_IMMUNITY))) {
+                                if (eachd > maxDamagePerHit) {
+                                    player.getCheatTracker().registerOffense(CheatingOffense.HIGH_DAMAGE, "[Damage: " + eachd + ", Expected: " + maxDamagePerHit + ", Mob: " + monster.getId() + "] [Job: " + player.getJob() + ", Level: " + player.getLevel() + ", Skill: " + attack.skill + "]");                                                                                      
+                                    
+                                    
+                                    // if(attack.skill != 3121004 && attack.skill != 3101005) {   // 폭풍의 시, 에로우 봄 : 활 아니면 데미지 변조 의심
+                                        World.Broadcast.broadcastGMMessage(MaplePacketCreator.serverNotice(6, "데미지의심 : " + player.getName()));
+                                        FileoutputUtil.log(FileoutputUtil.핵감지로그, "[" + CurrentReadable_Time() + "] 캐릭터ID : " + player.getId() + " / 닉네임 : " + player.getName() + " / 넣은데미지 : " + eachd + ", 예상데미지 : " + maxDamagePerHit + ", 몬스터 : " + monster.getId() + ", 스킬 : " + attack.skill + ", 레벨 : " + player.getLevel() + ", 직업 : " + player.getJob());
+                                    // };
+                                               
+                                    // 넣은 데미지가 예상 데미지 5배 이상일 경우 오토밴
+                                    if((eachd/maxDamagePerHit) > 5) {
+                                        String reason = "핵 사용으로 인한 밴";
+                                        if (player.ban(reason, true, false, true, "운영자")) {
+                                            World.Broadcast.broadcastGMMessage(MaplePacketCreator.serverNotice(6, "[밴] 핵 감지로 " + player.getName() + " 님이 밴 처리되었습니다."));
+                                        }; 
+                                    };
+                                    
+
+                                    if (attack.real) {
+                                        player.getCheatTracker().checkSameDamage(eachd, maxDamagePerHit);
+                                    }
+                                    if (eachd > maxDamagePerHit * 4) {
+                                        player.getCheatTracker().registerOffense(CheatingOffense.HIGH_DAMAGE_2, "[Damage: " + eachd + ", Expected: " + (maxDamagePerHit * 4) + ", Mob: " + monster.getId() + "] [Job: " + player.getJob() + ", Level: " + player.getLevel() + ", Skill: " + attack.skill + "]");
+                                        eachd = (int) (maxDamagePerHit * 4); // Convert to server calculated damage
+                                        // if (eachd >= 199999 && !player.isGM()) { //원본
+                                        if (eachd >= 199999 && !player.isGM() && attack.skill != 3221007) { //스나이핑 맥뎀 해제   
+                                            player.getClient().getSession().close();
+                                            World.Broadcast.broadcastGMMessage(MaplePacketCreator.serverNotice(6, "맥뎀제한 : " + player.getName()));
+                                            return;
+                                        }
+                                    }
+                                }
+                            } else {
+                                if (eachd > maxDamagePerHit) {
+                                    eachd = (int) (maxDamagePerHit);
+                                }
+                            }
+                        }
+                    }
+
+	...
+
+}
