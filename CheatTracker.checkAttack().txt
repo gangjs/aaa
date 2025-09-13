@@ -1,0 +1,19 @@
+public final void checkAttack(final int skillId, final int tickcount) {
+        final int AtkDelay = GameConstants.getAttackDelay(skillId, skillId == 0 ? null : SkillFactory.getSkill(skillId));
+        if ((tickcount - lastAttackTickCount) < AtkDelay) {
+            registerOffense(CheatingOffense.FASTATTACK);
+            FileoutputUtil.log(FileoutputUtil.핵감지로그, 
+            "[" + FileoutputUtil.CurrentReadable_Time() + "] 캐릭터ID : " + chr.get().getId() + " / 닉네임 : " + chr.get().getName() +
+            " / 감지 딜레이: " + (tickcount - lastAttackTickCount) + ", 기존 딜레이: " + AtkDelay +
+            ", 스킬: " + skillId + ", 레벨: " + chr.get().getLevel() + ", 직업: " + chr.get().getJob());
+            // 초보자의 경우 일반공격 최소 딜레이 : 570 / 모션제거핵 딜레이 : 0~90 / 100 이상 차이날 시 오토밴 코드 추가 
+            if(AtkDelay-(tickcount - lastAttackTickCount) >= 100) {
+                String reason = "핵 사용으로 인한 밴";
+                if (chr.get().ban(reason, true, false, true, "운영자")) {
+                    World.Broadcast.broadcastGMMessage(MaplePacketCreator.serverNotice(6, "[밴] 핵 감지로 " + chr.get().getName() + " 님이 밴 처리되었습니다."));
+                }; 
+            };
+
+	...
+
+};
