@@ -1,0 +1,32 @@
+public static void saveNewCharToDB(final MapleCharacter chr, final JobType type, short db) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        PreparedStatement pse = null;
+        ResultSet rs = null;
+        try {
+            con = DatabaseConnection.getConnection();
+            con.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
+            con.setAutoCommit(false);
+
+            ps = con.prepareStatement("INSERT INTO characters (level, str, dex, luk, `int`, hp, mp, maxhp, maxmp, sp, ap, skincolor, gender, job, hair, face, map, meso, party, buddyCapacity, pets, subcategory, accountid, name, world) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", DatabaseConnection.RETURN_GENERATED_KEYS);
+            ps.setInt(1, chr.level); // Level
+            final PlayerStats stat = chr.stats;
+            ps.setShort(2, stat.getStr()); // Str
+            ps.setShort(3, stat.getDex()); // Dex
+            ps.setShort(4, stat.getLuk()); // Luk
+            ps.setShort(5, stat.getInt()); // Int
+            ps.setInt(6, stat.getHp()); // HP
+            ps.setInt(7, stat.getMp());
+            ps.setInt(8, stat.getMaxHp()); // MP
+            ps.setInt(9, stat.getMaxMp());
+            
+            // 주사위 4 핵 의심 
+            if(stat.getStr() == 4 || stat.getDex() == 4 || stat.getInt()== 4 || stat.getLuk()== 4) {
+                FileoutputUtil.log(FileoutputUtil.핵감지로그, 
+                "[" + FileoutputUtil.CurrentReadable_Time() + "] 캐릭터ID : " + chr.getId() + " / 닉네임 : " + chr.getName() +
+                " / 주사위 핵 의심 / 힘 : " + stat.getStr() + ", 덱스 : " + stat.getDex() + ", 인트 : " + stat.getInt() + ", 럭 : " + stat.getLuk());
+            }
+
+	...
+
+};
