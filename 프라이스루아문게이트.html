@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>NPC 출근 시간 계산기</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background:#f9f9f9; }
+  .tables { display: flex; gap: 10px; }
+  table { border-collapse: collapse; margin-top: 0px; min-width: 150px; table-layout: fixed; }
+  td, th { 
+    border: 1px solid #ccc; 
+    padding: 2px 5px; 
+    text-align: center; 
+    font-size: 16px; 
+    height: 25px; /* 고정 행 높이 */
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+  }
+  th { background: #eee; }
+</style>
+</head>
+<body>
+
+<div class="tables">
+  <div>
+    <table>
+      <thead>
+        <tr><th>루아 출현 시간</th></tr>
+      </thead>
+      <tbody id="lua-schedule"></tbody>
+    </table>
+  </div>
+
+  <div>
+    <table>
+      <thead>
+        <tr><th>시간</th><th>프라이스 위치</th></tr>
+      </thead>
+      <tbody id="price-schedule"></tbody>
+    </table>
+  </div>
+
+  <div>
+    <table>
+      <thead>
+        <tr><th>문게이트 시간</th><th>위치</th></tr>
+      </thead>
+      <tbody id="moon-schedule"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+// ---------------- 루아 ----------------
+const luaBaseTime = new Date("2025-09-26T09:27:00"); 
+const luaCycleMinutes = 1548;
+const luaPatternDays = [1,3,4,6,7,8,16,18,21,25,29,32,36,41];
+
+function getLuaSchedules(count=15) {
+  const results = [];
+  const now = new Date();
+  const nowOffset = new Date(now.getTime() - 18*60*1000);
+  let cycle = 0;
+  while (results.length < count) {
+    for (let d of luaPatternDays) {
+      let candidate = new Date(luaBaseTime.getTime() 
+        + (d-1)*36*60*1000
+        + cycle*luaCycleMinutes*60*1000);
+      if (candidate > nowOffset) {
+        results.push(candidate);
+        if (results.length >= count) break;
+      }
+    }
+    cycle++;
+  }
+  return results;
+}
+
+// ---------------- 프라이스 ----------------
+const priceBase = new Date("2025-09-26T00:00:00");
+const priceCycleMinutes = 48*60;
+
+const priceTable = [
+  ["00:00:00", "이멘마하 남쪽다리 중간 섬"],
+  ["00:36:00", "센마이평원에서 이멘 오는길에 움집터"],
+  ["01:12:00", "드래곤유적지를 기준으로 5시쪽 집"],
+  ["01:48:00", "바리던전 옆"],
+  ["02:24:00", "던바튼 학교앞"],
+  ["03:00:00", "두갈드아일 벌목캠프 움집"],
+  ["03:36:00", "티르코네일 여관"],
+  ["04:12:00", "두갈드아일 벌목캠프 움집"],
+  ["04:48:00", "던바튼 동쪽 감자밭 천막"],
+  ["05:24:00", "드래곤유적지를 기준으로 5시쪽 집"],
+  ["06:00:00", "반호르 주점"],
+  ["06:36:00", "센마이평원에서 이멘 오는길에 움집터"],
+  ["07:12:00", "이멘마하 무기점 뒷골목"],
+  ["07:48:00", "케오섬"],
+  ["08:24:00", "이멘마하 남쪽다리 중간 섬"],
+  ["09:00:00", "센마이평원에서 이멘 오는길에 움집터"],
+  ["09:36:00", "드래곤유적지를 기준으로 5시쪽 집"],
+  ["10:12:00", "바리던전 옆"],
+  ["10:48:00", "던바튼 학교앞"],
+  ["11:24:00", "두갈드아일 벌목캠프 움집"],
+  ["12:00:00", "티르코네일 여관"],
+  ["12:36:00", "두갈드아일 벌목캠프 움집"],
+  ["13:12:00", "던바튼 동쪽 감자밭 천막"],
+  ["13:48:00", "드래곤유적지를 기준으로 5시쪽 집"],
+  ["14:24:00", "반호르 주점"],
+  ["15:00:00", "센마이평원에서 이멘 오는길에 움집터"],
+  ["15:36:00", "이멘마하 무기점 뒷골목"],
+  ["16:12:00", "케오섬"],
+  ["16:48:00", "이멘마하 남쪽다리 중간 섬"],
+  ["17:24:00", "센마이평원에서 이멘 오는길에 움집터"],
+  ["18:00:00", "드래곤유적지를 기준으로 5시쪽 집"],
+  ["18:36:00", "바리던전 옆"],
+  ["19:12:00", "던바튼 학교앞"],
+  ["19:48:00", "두갈드아일 벌목캠프 움집"],
+  ["20:24:00", "티르코네일 여관"],
+  ["21:00:00", "두갈드아일 벌목캠프 움집"],
+  ["21:36:00", "던바튼 동쪽 감자밭 천막"],
+  ["22:12:00", "드래곤유적지를 기준으로 5시쪽 집"],
+  ["22:48:00", "반호르 주점"],
+  ["23:24:00", "센마이평원에서 이멘 오는길에 움집터"],
+  ["00:00:00", "이멘마하 무기점 뒷골목"],
+  ["00:36:00", "케오섬"],
+  ["01:12:00", "이멘마하 남쪽다리 중간 섬"],
+  ["01:48:00", "센마이평원에서 이멘 오는길에 움집터"],
+  ["02:24:00", "드래곤유적지를 기준으로 5시쪽 집"],
+  ["03:00:00", "바리던전 옆"],
+  ["03:36:00", "던바튼 학교앞"],
+  ["04:12:00", "두갈드아일 벌목캠프 움집"],
+  ["04:48:00", "티르코네일 여관"],
+  ["05:24:00", "두갈드아일 벌목캠프 움집"],
+  ["06:00:00", "던바튼 동쪽 감자밭 천막"],
+  ["06:36:00", "드래곤유적지를 기준으로 5시쪽 집"],
+  ["07:12:00", "반호르 주점"],
+  ["07:48:00", "센마이평원에서 이멘 오는길에 움집터"],
+  ["08:24:00", "이멘마하 무기점 뒷골목"],
+  ["09:00:00", "케오섬"],
+  ["09:36:00", "이멘마하 남쪽다리 중간 섬"],
+  ["10:12:00", "센마이평원에서 이멘 오는길에 움집터"],
+  ["10:48:00", "드래곤유적지를 기준으로 5시쪽 집"],
+  ["11:24:00", "바리던전 옆"],
+  ["12:00:00", "던바튼 학교앞"],
+  ["12:36:00", "두갈드아일 벌목캠프 움집"],
+  ["13:12:00", "티르코네일 여관"],
+  ["13:48:00", "두갈드아일 벌목캠프 움집"],
+  ["14:24:00", "던바튼 동쪽 감자밭 천막"],
+  ["15:00:00", "드래곤유적지를 기준으로 5시쪽 집"],
+  ["15:36:00", "반호르 주점"],
+  ["16:12:00", "센마이평원에서 이멘 오는길에 움집터"],
+  ["16:48:00", "이멘마하 무기점 뒷골목"],
+  ["17:24:00", "케오섬"],
+  ["18:00:00", "이멘마하 남쪽다리 중간 섬"],
+  ["18:36:00", "센마이평원에서 이멘 오는길에 움집터"],
+  ["19:12:00", "드래곤유적지를 기준으로 5시쪽 집"],
+  ["19:48:00", "바리던전 옆"],
+  ["20:24:00", "던바튼 학교앞"],
+  ["21:00:00", "두갈드아일 벌목캠프 움집"],
+  ["21:36:00", "티르코네일 여관"],
+  ["22:12:00", "두갈드아일 벌목캠프 움집"],
+  ["22:48:00", "던바튼 동쪽 감자밭 천막"],
+  ["23:24:00", "드래곤유적지를 기준으로 5시쪽 집"]
+];
+
+function getPriceSchedules(count=15) {
+  const results = [];
+  const now = new Date();
+  
+  const nowOffset = new Date(now.getTime() + 1440*60*1000);
+  const elapsedMinutes = (nowOffset - priceBase) / 60000;
+  
+  // 전체 줄 개수
+  const totalRows = priceTable.length; // 80
+  const minutesPerRow = priceCycleMinutes / totalRows; // 2880 / 80 = 36분
+  
+  // 지금이 몇 번째 줄인지
+  const currentIdx = Math.floor(elapsedMinutes / minutesPerRow) % totalRows;
+  const cycleCount = Math.floor(elapsedMinutes / priceCycleMinutes);
+
+  for (let i=0; i<count; i++) {
+    let idx = (currentIdx + i) % totalRows;
+    let shift = cycleCount + Math.floor((currentIdx + i) / totalRows);
+    let dt = new Date(priceBase.getTime() + (shift*priceCycleMinutes + idx*minutesPerRow) * 60000);
+    results.push([dt, priceTable[idx][1]]);
+  }
+  return results;
+}
+
+
+
+
+// ---------------- 문게이트 ----------------
+const moonBase = new Date("2025-09-26T16:03:00");
+const moonInterval = 36;
+const moonGates = [
+  "케오섬","이멘마하","타라","반호르","던바튼","케안항구",
+  "타라","탈틴","티르코네일","던바튼","반호르","타라",
+  "케오섬","티르코네일","탈틴","이멘마하","타라","던바튼",
+  "케안항구","반호르","이멘마하","타라","티르코네일","탈틴"
+];
+
+function getMoonSchedules(count=15) {
+  const results = [];
+  const now = new Date();
+  const nowOffset = new Date(now.getTime() - 18*60*1000);
+  const elapsedMinutes = Math.floor((nowOffset - moonBase)/60000);
+  let idx = Math.floor(elapsedMinutes / moonInterval);
+  if (elapsedMinutes < 0) idx = -1;
+  for (let i=1; i<=count; i++) {
+    let nextIdx = idx + i;
+    let dt = new Date(moonBase.getTime() + nextIdx*moonInterval*60000);
+    let loc = moonGates[nextIdx % moonGates.length];
+    results.push([dt, loc]);
+  }
+  return results;
+}
+
+// ---------------- 출력 함수 ----------------
+function formatTime(dt) {
+  const hh = String(dt.getHours()).padStart(2,'0');
+  const mm = String(dt.getMinutes()).padStart(2,'0');
+  const ss = String(dt.getSeconds()).padStart(2,'0');
+  return `${hh}:${mm}:${ss}`;
+}
+
+// 루아 출력
+const luaTbody = document.getElementById("lua-schedule");
+getLuaSchedules(15).forEach(d=>{
+  const tr = document.createElement("tr");
+  const end = new Date(d.getTime() + 18*60000);
+  tr.innerHTML = `<td>${formatTime(d)} ~ ${formatTime(end)}</td>`;
+  luaTbody.appendChild(tr);
+});
+
+// 프라이스 출력
+const priceTbody = document.getElementById("price-schedule");
+getPriceSchedules(15).forEach(([dt, loc])=>{
+  const tr = document.createElement("tr");
+  tr.innerHTML = `<td>${formatTime(dt)}</td><td>${loc}</td>`;
+  priceTbody.appendChild(tr);
+});
+
+// 문게이트 출력
+const moonTbody = document.getElementById("moon-schedule");
+getMoonSchedules(15).forEach(([dt, loc])=>{
+  const end = new Date(dt.getTime() + 18*60000);
+  const tr = document.createElement("tr");
+  tr.innerHTML = `<td>${formatTime(dt)} ~ ${formatTime(end)}</td><td>${loc}</td>`;
+  moonTbody.appendChild(tr);
+});
+</script>
+
+</body>
+</html>
