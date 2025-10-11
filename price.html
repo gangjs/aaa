@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>프라이스 위치/시간</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background:#f9f9f9; }
+  table { border-collapse: collapse; margin: auto; }
+  td, th { border: 1px solid #ccc; padding: 2px 5px; text-align: center; font-size: 16px; height: 25px; }
+  tbody tr:first-child { background-color: #ffeb3b; }
+  th { background: #eee; }
+</style>
+</head>
+<body>
+<center>
+  <table>
+    <thead>
+      <tr><th>시간</th><th>프라이스 위치</th></tr>
+    </thead>
+    <tbody id="price-schedule"></tbody>
+  </table>
+</center>
+<script>
+var priceBase = new Date(2025, 8, 17, 0, 0, 0); // 2025-09-17 00:00:00
+var intervalMinutes = 36; // 36분마다 변경
+
+// 실제 현실 시간 순서 패턴
+var priceTable = [
+  "드래곤유적지 5시방향 집",
+  "바리던전 옆",
+  "던바튼 학교 앞",
+  "두갈드아일 벌목캠프 움집",
+  "티르코네일 여관",
+  "두갈드아일 벌목캠프 움집",
+  "던바튼 동쪽 감자밭 천막",
+  "드래곤유적지 5시방향 집",
+  "반호르 주점",
+  "센마이평원 삼거리 움집터",
+  "이멘마하 무기점 뒷골목",
+  "케오섬",
+  "이멘마하 남쪽다리 중간 섬",
+  "센마이평원 삼거리 움집터",
+  "드래곤유적지 5시방향 집",
+  "바리던전 옆",
+  "던바튼 학교 앞",
+  "두갈드아일 벌목캠프 움집",
+  "티르코네일 여관",
+  "두갈드아일 벌목캠프 움집",
+  "던바튼 동쪽 감자밭 천막",
+  "드래곤유적지 5시방향 집",
+  "반호르 주점",
+  "센마이평원 삼거리 움집터",
+  "이멘마하 무기점 뒷골목",
+  "케오섬",
+  "이멘마하 남쪽다리 중간 섬",
+  "센마이평원 삼거리 움집터",
+  "드래곤유적지 5시방향 집",
+  "바리던전 옆",
+  "던바튼 학교 앞",
+  "두갈드아일 벌목캠프 움집",
+  "티르코네일 여관",
+  "두갈드아일 벌목캠프 움집",
+  "던바튼 동쪽 감자밭 천막",
+  "드래곤유적지 5시방향 집",
+  "반호르 주점",
+  "센마이평원 삼거리 움집터",
+  "이멘마하 무기점 뒷골목",
+  "케오섬",
+  "이멘마하 남쪽다리 중간 섬",
+  "센마이평원 삼거리 움집터"
+];
+
+function getPriceSchedules(count){
+  count = count || 15;
+  var results = [];
+  var now = new Date();
+
+  var elapsedMinutes = Math.floor((now - priceBase)/60000);
+  var blockIndex = Math.floor(elapsedMinutes / intervalMinutes);
+
+  for(var i=0;i<count;i++){
+    var idx = (blockIndex + i) % priceTable.length;
+    var dt = new Date(priceBase.getTime() + (blockIndex + i) * intervalMinutes * 60000);
+    results.push([dt, priceTable[idx]]);
+  }
+  return results;
+}
+
+function formatTime(dt){
+  var hh = dt.getHours(); if(hh<10) hh="0"+hh;
+  var mm = dt.getMinutes(); if(mm<10) mm="0"+mm;
+  return hh+":"+mm+":00";
+}
+
+var tbody = document.getElementById("price-schedule");
+var schedules = getPriceSchedules(15);
+for(var i=0;i<schedules.length;i++){
+  var tr = document.createElement("tr");
+  var td1 = document.createElement("td");
+  var td2 = document.createElement("td");
+  td1.innerHTML = formatTime(schedules[i][0]);
+  td2.innerHTML = schedules[i][1];
+  tr.appendChild(td1);
+  tr.appendChild(td2);
+  tbody.appendChild(tr);
+}
+</script>
+</body>
+</html>
