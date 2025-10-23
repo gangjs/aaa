@@ -1,0 +1,1 @@
+E8 DC FB FF FF 50 ->  B8 01 00 00 00 50 (GetLanguageId -> mov eax,1)
