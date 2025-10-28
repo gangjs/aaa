@@ -1,0 +1,49 @@
+server void Repair_HolyEgoFunction(
+	character me,
+	character player,
+	string msg_repair_AsktoRepair,
+	string msg_repair_guide,
+	string msg_repair_message_success,
+	string msg_repair_message_fail,
+	string msg_repair_message_perfectfail,
+	string msg_repair_no_need_repair
+	)
+////////////////////////////////////////////////////////////////////////////////
+{
+	// 에고 아이템 확인
+	item cEgoItem = player.GetEgoWeapon();
+	if(cEgoItem.IsNull()) return;
+
+	//"사용자의 에고소드" ~ 같은 식의 이름
+	//string EgoFullName = "{0}의 {1}"<< player.GetGeneralName() << cEgoItem.GetEgoName();
+	string EgoName = cEgoItem.GetEgoName();
+
+	string message;
+
+	int iDura = cEgoItem.GetDurability();
+	int iDuraMax = cEgoItem.GetDurabilityMax();
+
+	if(iDura < iDuraMax)
+	{
+		itemclass cOriginalClass = cEgoItem.GetEgoOriginalItemClass();
+		message=msg_repair_AsktoRepair<<ToString(iDura)<<ToString(iDuraMax);
+
+		ShowEgoTalkMessage(me, player, message +["egoweapon.ego.64"]);
+		string reply = player.SelectInTalk();
+
+		int iPoint, iRate;
+		iPoint = iDuraMax;	
+		// iPoint = iDuraMax/2; // 전부 수리로 변경
+
+		// 최대 내구의 1/2 수리, 홀수면 반올림 -> 전부 수리로 변경
+//		if(iDuraMax%2==1)
+//		{
+//			iPoint++;
+//		}
+		
+		// 수리율 99% -> 100 수정
+		iRate = 100;
+
+
+....
+}
