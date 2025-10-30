@@ -1,4 +1,4 @@
-int	iNewDesire	= 0;
+							int	iNewDesire	= 0;
 
 							if(cEgoItem.GetEgoLevel(0) == 50
 							   && cEgoItem.GetEgoLevel(1) == 50
@@ -32,7 +32,7 @@ int	iNewDesire	= 0;
 							}
 							
 							// 이 함수는 지식욕에 따라 변경된 능력치를 클라이언트에 동기화하는 기능까지 제공한다.
-							// 따라서 꼭 필요한 상황이 아니면 최대한 적게 호출하도록 해야한다. hiyjs/2011.11.10
+							// 따라서 꼭 필요한 상황이 아니면 최대한 적게 호출하도록 해야한다.
 							cEgoItem.SetEgoDesire(iNewDesire);
 
 							player.DestroyItem(cItem);
