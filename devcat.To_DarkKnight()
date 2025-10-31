@@ -1,0 +1,106 @@
+//////////////////////////////////////////////////////////////////////////////////
+server void To_DarkKnight(
+	character me,
+	character player)
+// : 팔라딘에서 다크나이트 전향
+//////////////////////////////////////////////////////////////////////////////////
+{
+	///////////////////////////////////////////////
+	// 팔라딘 스킬을 삭제하고 다크나이트 스킬을 준다. (팔라딘 스킬 레벨을 상속받는다)
+	///////////////////////////////////////////////
+	int skillLevel;
+	int skillExp;
+
+
+	///////////////////////////////////////////////
+	skillLevel = player.GetSkillLevel(40001); // 스피리트 오브 오더
+	skillExp = player.GetSkillExpPoint(40001);
+	if (skillLevel < 1)
+	{
+		skillLevel = 1;
+	}
+	player.AddSkill(41001, skillLevel); // 소울 오브 카오스
+	player.ModifySkillExpPoint(41001, skillExp);
+	player.ForgetSkill(40001); // 스피리트 오브 오더 삭제
+
+	///////////////////////////////////////////////
+	// 컨트롤 오브 다크니스는 다크나이트에게만 있는 스킬이다.
+	player.AddSkill(41002, 1); // 컨트롤 오브 다크니스
+
+
+	
+	// 패시브 3종
+	///////////////////////////////////////////////
+	skillLevel = player.GetSkillLevel(40002); // 파워 오브 오더
+	skillExp = player.GetSkillExpPoint(40002);
+	if (skillLevel < 1)
+	{
+		skillLevel = 1;
+	}
+	player.AddSkill(41011, skillLevel); // 바디 오브 카오스
+	player.ModifySkillExpPoint(41011, skillExp);
+	player.ForgetSkill(40002); // 파워 오브 오더 삭제
+
+	///////////////////////////////////////////////
+	skillLevel = player.GetSkillLevel(40003); // 아이 오브 오더
+	skillExp = player.GetSkillExpPoint(40003);
+	if (skillLevel < 1)
+	{
+		skillLevel = 1;
+	}
+	player.AddSkill(41013, skillLevel); // 핸즈 오브 카오스
+	player.ModifySkillExpPoint(41013, skillExp);
+	player.ForgetSkill(40003); // 아이 오브 오더 삭제
+
+	///////////////////////////////////////////////
+	skillLevel = player.GetSkillLevel(40004); // 소드 오브 오더
+	skillExp = player.GetSkillExpPoint(40004);
+	if (skillLevel < 1)
+	{
+		skillLevel = 1;
+	}
+	player.AddSkill(41012, skillLevel); // 브레인 오브 카오스
+	player.ModifySkillExpPoint(41012, skillExp);
+	player.ForgetSkill(40004); // 소드 오브 오더 삭제
+
+
+	// 디펜스
+	///////////////////////////////////////////////
+	skillLevel=0;
+	skillLevel = player.GetSkillLevel(40011); // 팔라딘 내츄럴 실드
+	skillExp = player.GetSkillExpPoint(40011);
+	if (skillLevel < 1)
+	{
+		skillLevel = 1;
+	}
+	player.AddSkill(41021, skillLevel); // 다크 내츄럴 실드
+	player.ModifySkillExpPoint(41021, skillExp);
+	player.ForgetSkill(40011); // 팔라딘 내츄럴 실드 삭제
+
+	///////////////////////////////////////////////
+	skillLevel=0;
+	skillLevel = player.GetSkillLevel(40012); // 팔라딘 헤비 스탠더
+	skillExp = player.GetSkillExpPoint(40012);
+	if (skillLevel < 1)
+	{
+		skillLevel = 1;
+	}
+	player.AddSkill(41022, skillLevel); // 다크 헤비 스탠더
+	player.ModifySkillExpPoint(41022, skillExp);
+	player.ForgetSkill(40012); // 팔라딘 헤비 스탠더 삭제
+
+	///////////////////////////////////////////////
+	skillLevel=0;
+	skillLevel = player.GetSkillLevel(40013); // 팔라딘 마나 리프랙터
+	skillExp = player.GetSkillExpPoint(40013);
+	if (skillLevel < 1)
+	{
+		skillLevel = 1;
+	}
+	player.AddSkill(41023, skillLevel); // 다크 마나 리프랙터
+	player.ModifySkillExpPoint(41023, skillExp);
+	player.ForgetSkill(40013); // 팔라딘 마나 리프랙터 삭제
+	
+	player.EndTalk(me,["npc.variable.devcat.236"]);
+	return;
+}
