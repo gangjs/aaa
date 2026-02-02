@@ -1,6 +1,6 @@
 public final void eggTimer(int time) {
-        getClient().getSession().write(MaplePacketCreator.serverNotice(5, "[피그미 에그] 20분마다 루디브리엄 에그 획득 (기타 슬롯 2칸 필요, 채널이동 시 초기화)"));
-//        getClient().getSession().write(MaplePacketCreator.sendHint("피그미 에그 획득중... \r\n" + gage, 250, 60)); // 진행상황 저장
+        getClient().getSession().write(MaplePacketCreator.serverNotice(5, "[피그미 에그] 20분마다 루디브리엄 피그미 에그 획득 (기타 슬롯 2칸 필요, 채널이동 시 초기화)"));
+        getClient().getSession().write(MaplePacketCreator.sendHint("피그미 에그 획득중... " + eggTasking + "/20\r\n" + gage, 250, 60)); // 진행상황 저장
         
         eggTimer = MapTimer.getInstance().register(new Runnable() {
             public void run() {
@@ -19,7 +19,7 @@ public final void eggTimer(int time) {
                     eggTasking = 0; // 타이머 초기화
                     gage = "□□□□□□□□□□□□□□□□□□□□";
                     int egg = 4180001;                
-                    getClient().getSession().write(MaplePacketCreator.sendHint("피그미 에그 획득중... 0/20\r\n" + gage, 250, 60));
+                    getClient().getSession().write(MaplePacketCreator.sendHint("피그미 에그 획득중... " + eggTasking + "/20\r\n" + gage, 250, 60));
                     if (getInventory(MapleInventoryType.ETC).getNumFreeSlot() < 2) {
                         dropMessage(5, "[피그미 에그] 인벤토리 슬롯이 부족하여 피그미 에그를 획득 하지 못했습니다.");
                     } else {
