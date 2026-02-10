@@ -1,0 +1,12 @@
+public final void inFreeMarket() {
+      if (getMapId() != 910000000) {
+          if (getPlayer().getLevel() >= 10) {
+              saveLocation("FREE_MARKET");
+              playPortalSE();
+              // warp(910000000);
+              warp(910000000, 0); // 자유시장 워프 0번포탈
+          } else {
+              playerMessage(5, "레벨 10 이상만 자유시장에 입장할 수 있습니다.");
+          }
+      }
+  }
