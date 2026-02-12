@@ -1,0 +1,61 @@
+    public final void eggTimer(int time) {
+        getClient().getSession().write(MaplePacketCreator.serverNotice(5, "[피그미 에그] 20분마다 루디브리엄 에그 획득 (기타 슬롯 2칸 필요, 채널이동 시 초기화)"));
+        getClient().getSession().write(MaplePacketCreator.sendHint("피그미 에그 획득중... " + eggTasking + "/20\r\n" + gage, 250, 60)); // 진행상황 저장
+        
+        eggTimer = MapTimer.getInstance().register(new Runnable() {
+            public void run() {
+                /*
+                if (eggTasking < 20) { // 20칸보다 작을때
+                    eggTasking++;   // 1칸 증가
+
+                    gage = ""; // gage 초기화
+                    for (int i = 1; i <= eggTasking; i++) {
+                        gage += "■";
+                    }
+                    for (int i = 20; i > eggTasking; i--) {
+                        gage += "□";
+                    }
+                    getClient().getSession().write(MaplePacketCreator.sendHint("피그미 에그 획득중... " + eggTasking + "/20\r\n" + gage, 250, 60));
+                } else { // 20칸 완료
+                    eggTasking = 0; // 타이머 초기화
+                    gage = "□□□□□□□□□□□□□□□□□□□□";
+                    int egg = 4180001;                
+                    getClient().getSession().write(MaplePacketCreator.sendHint("피그미 에그 획득중... " + eggTasking + "/20\r\n" + gage, 250, 60));
+                    if (getInventory(MapleInventoryType.ETC).getNumFreeSlot() < 2) {
+                        dropMessage(5, "[피그미 에그] 인벤토리 슬롯이 부족하여 피그미 에그를 획득하지 못했습니다.");
+                    } else {
+                        MapleInventoryManipulator.addById(getClient(), egg, (short) 1, null);
+                        //gainItem(bait, (short) -1, false, -1, null);
+                        dropMessage(5, "[피그미 에그] 루디브리엄 피그미 에그 1개를 획득했습니다.");
+                    }
+                }
+                */
+                eggTasking++;
+
+                if (eggTasking >= 20) {
+                    eggTasking = 0;
+                    gage = "□□□□□□□□□□□□□□□□□□□□";
+
+                    int egg = 4180001;
+
+                    if (getInventory(MapleInventoryType.ETC).getNumFreeSlot() < 2) {
+                        dropMessage(5, "[피그미 에그] 인벤토리 기타 슬롯이 부족하여 피그미 에그를 획득하지 못했습니다.");
+                    } else {
+                        MapleInventoryManipulator.addById(getClient(), egg, (short) 1, null);
+                        dropMessage(5, "[피그미 에그] 20분 경과 보상으로 루디브리엄 피그미 에그 1개를 획득했습니다.");
+                    }
+                } else {
+                    gage = "";
+                    for (int i = 1; i <= eggTasking; i++) gage += "■";
+                    for (int i = 20; i > eggTasking; i--) gage += "□";
+                }
+
+                getClient().getSession().write(
+                    MaplePacketCreator.sendHint(
+                        "피그미 에그 획득중... " + eggTasking + "/20\r\n" + gage,
+                        250, 60
+                    )
+                );
+            }
+        }, time / 10, time / 10);   // 10분/10 - 1분마다 호출 * 20칸      
+    }
