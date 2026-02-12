@@ -1,0 +1,293 @@
+public static final void UseCashItem(final LittleEndianAccessor slea, final MapleClient c) {
+
+  ...
+
+  case 5050000: { // AP Reset AP 되돌리기
+                Map<MapleStat, Integer> statupdate = new EnumMap<MapleStat, Integer>(MapleStat.class);
+                final int apto = slea.readInt();
+                final int apfrom = slea.readInt();
+
+                if (apto == apfrom) {
+                    break; // Hack
+                }
+                final int job = c.getPlayer().getJob();
+                final PlayerStats playerst = c.getPlayer().getStat();
+                used = true;
+
+                switch (apto) { // AP to
+                    case 64: // str
+                        if (playerst.getStr() >= 1020) {
+                            used = false;
+                        }
+                        break;
+                    case 128: // dex
+                        if (playerst.getDex() >= 1020) {
+                            used = false;
+                        }
+                        break;
+                    case 256: // int
+                        if (playerst.getInt() >= 1020) {
+                            used = false;
+                        }
+                        break;
+                    case 512: // luk
+                        if (playerst.getLuk() >= 1020) {
+                            used = false;
+                        }
+                        break;
+                    case 2048: // hp
+                        /* if (playerst.getMaxHp() >= 30000) {
+                            used = false;
+                        }*/
+                        c.getPlayer().dropMessage(1, "피작은 허용되지 않습니다.");
+                        used = false;
+                        break;
+                    case 8192: // mp
+                        if (playerst.getMaxMp() >= 30000) {
+                            used = false;
+                        }
+                        break;
+                    default:
+                        FileoutputUtil.log(FileoutputUtil.packetHack_Log, "Stat Hacked : " + c.getPlayer().getName() + ", accID : " + c.getAccID()
+                                + ",accName : " + c.getAccountName());
+                        AutobanManager.getInstance().autoban(c, "stat hack");
+                        used = false;
+                        break;
+                }
+                switch (apfrom) { // AP to
+                    case 64: // str
+                        if (playerst.getStr() <= 4 || (c.getPlayer().getJob() % 1000 / 100 == 1 && playerst.getStr() <= 35)) {
+                            used = false;
+                        }
+                        break;
+                    case 128: // dex
+                        if (playerst.getDex() <= 4 || (c.getPlayer().getJob() % 1000 / 100 == 3 && playerst.getDex() <= 25) || (c.getPlayer().getJob() % 1000 / 100 == 4 && playerst.getDex() <= 25)) {
+                            used = false;
+                        }
+                        break;
+                    case 256: // int
+                        if (playerst.getInt() <= 4 || (c.getPlayer().getJob() % 1000 / 100 == 2 && playerst.getInt() <= 20)) {
+                            used = false;
+                        }
+                        break;
+                    case 512: // luk
+                        if (playerst.getLuk() <= 4) {
+                            used = false;
+                        }
+                        break;
+                    case 2048: // hp
+                        // if (/*playerst.getMaxMp() < ((c.getPlayer().getLevel() * 14) + 134) || */c.getPlayer().getHpApUsed() <= 0 || c.getPlayer().getHpApUsed() >= 10000) {
+                        //    used = false;
+                        //     c.getPlayer().dropMessage(1, "You need points in HP or MP in order to take points out.");
+                        //  }
+                        c.getPlayer().dropMessage(1, "피작은 허용되지 않습니다.");
+                        break;
+                    case 8192: // mp
+//                        if (/*playerst.getMaxMp() < ((c.getPlayer().getLevel() * 14) + 134) || */c.getPlayer().getHpApUsed() <= 0 || c.getPlayer().getHpApUsed() >= 10000) {
+//                            used = false;
+//                            c.getPlayer().dropMessage(1, "You need points in HP or MP in order to take points out.");
+//                        }
+                        c.getPlayer().dropMessage(1, "피작은 허용되지 않습니다.");
+                        break;
+                    default:
+                        FileoutputUtil.log(FileoutputUtil.packetHack_Log, "Stat Hacked : " + c.getPlayer().getName() + ", accID : " + c.getAccID()
+                                + ",accName : " + c.getAccountName());
+                        AutobanManager.getInstance().autoban(c, "stat hack");
+                        used = false;
+                        break;
+                }
+                if (used) {
+                    switch (apto) { // AP to
+                        case 64: { // str
+                            final int toSet = playerst.getStr() + 1;
+                            playerst.setStr((short) toSet, c.getPlayer());
+                            statupdate.put(MapleStat.STR, toSet);
+                            break;
+                        }
+                        case 128: { // dex
+                            final int toSet = playerst.getDex() + 1;
+                            playerst.setDex((short) toSet, c.getPlayer());
+                            statupdate.put(MapleStat.DEX, toSet);
+                            break;
+                        }
+                        case 256: { // int
+                            final int toSet = playerst.getInt() + 1;
+                            playerst.setInt((short) toSet, c.getPlayer());
+                            statupdate.put(MapleStat.INT, toSet);
+                            break;
+                        }
+                        case 512: { // luk
+                            final int toSet = playerst.getLuk() + 1;
+                            playerst.setLuk((short) toSet, c.getPlayer());
+                            statupdate.put(MapleStat.LUK, toSet);
+                            break;
+                        }
+                        case 2048: // hp
+//                            int maxhp = playerst.getMaxHp();
+//                            if (GameConstants.isBeginnerJob(job)) { // Beginner
+//                                maxhp += Randomizer.rand(4, 8);
+//                            } else if ((job >= 100 && job <= 132) || (job >= 3200 && job <= 3212) || (job >= 1100 && job <= 1112) || (job >= 3100 && job <= 3112)) { // Warrior
+//
+//                                Skill improvingMaxHP = SkillFactory.getSkill(1000001);
+//                                int improvingMaxHPLevel = c.getPlayer().getSkillLevel(improvingMaxHP);
+//                                maxhp += Randomizer.rand(20, 25);
+//                                if (improvingMaxHPLevel >= 1) {
+//                                    maxhp += improvingMaxHP.getEffect(improvingMaxHPLevel).getY();
+//                                }
+//                            } else if ((job >= 200 && job <= 232) || (GameConstants.isEvan(job)) || (job >= 1200 && job <= 1212)) { // Magician 법사
+//                                maxhp += Randomizer.rand(10, 20);
+//                            } else if ((job >= 300 && job <= 322) || (job >= 400 && job <= 434) || (job >= 1300 && job <= 1312) || (job >= 1400 && job <= 1412) || (job >= 3300 && job <= 3312) || (job >= 2300 && job <= 2312)) { // Bowman
+//                                maxhp += Randomizer.rand(16, 20); // 
+//                            } else if ((job >= 520 && job <= 522) || (job >= 500 && job <= 512) || (job >= 1500 && job <= 1512)) {
+//                                maxhp += Randomizer.rand(20, 25);
+//                            } else if (job >= 2000 && job <= 2112) { // Aran
+//                                maxhp += Randomizer.rand(34, 38);
+//                            } else { // GameMaster
+//                                maxhp += Randomizer.rand(50, 100); // 여기가 공식있는 곳
+//                            }
+//                            //랜덤 상승치 정해진 후 스킬효과에 따른 추가 상승
+//                            if (c.getPlayer().getTotalSkillLevel(1000001) > 0) {
+//                                maxhp += SkillFactory.getSkill(1000001).getEffect(c.getPlayer().getTotalSkillLevel(1000001)).getY();
+//                            }
+//                            if (c.getPlayer().getTotalSkillLevel(5100000) > 0) {
+//                                maxhp += SkillFactory.getSkill(5100000).getEffect(c.getPlayer().getTotalSkillLevel(5100000)).getY();
+//                            }
+//                            if (c.getPlayer().getTotalSkillLevel(15100000) > 0) {
+//                                maxhp += SkillFactory.getSkill(15100000).getEffect(c.getPlayer().getTotalSkillLevel(15100000)).getY();
+//                            }
+//                            maxhp = Math.min(30000, Math.abs(maxhp));
+//                            c.getPlayer().setHpApUsed((short) (c.getPlayer().getHpApUsed() + 1));
+//                            playerst.setMaxHp(maxhp, c.getPlayer());
+//                            statupdate.put(MapleStat.MAXHP, (int) maxhp);
+                            used = false;
+                            c.getPlayer().dropMessage(1, "피작은 허용되지 않습니다.");
+                            break;
+
+                        case 8192: // mp
+                            int maxmp = playerst.getMaxMp();
+
+                            if (job == 0) { // Beginner
+                                maxmp += Randomizer.rand(6, 8);
+                            } else if (job >= 100 && job <= 132) { // Warrior
+                                maxmp += Randomizer.rand(2, 4);
+                            } else if (job >= 200 && job <= 232) { // Magician
+                                Skill improvingMaxMP = SkillFactory.getSkill(2000001);
+                                int improvingMaxMPLevel = c.getPlayer().getSkillLevel(improvingMaxMP);
+                                maxmp += Randomizer.rand(18, 20);
+                                if (improvingMaxMPLevel >= 1) {
+                                    maxmp += improvingMaxMP.getEffect(improvingMaxMPLevel).getY();
+                                }
+                            } else if (job >= 300 && job <= 322) { // Bowman
+                                maxmp += Randomizer.rand(10, 12);
+                            } else if (job >= 400 && job <= 434) { // Thief
+                                maxmp += Randomizer.rand(10, 12);
+                            } else if (job >= 500 && job <= 522) { // Pirate
+                                maxmp += Randomizer.rand(10, 12);
+                            } else if (job >= 1100 && job <= 1111) { // Soul Master
+                                maxmp += Randomizer.rand(6, 9);
+                            } else if (job >= 1200 && job <= 1211) { // Flame Wizard
+                                Skill improvingMaxMP = SkillFactory.getSkill(12000000);
+                                int improvingMaxMPLevel = c.getPlayer().getSkillLevel(improvingMaxMP);
+                                maxmp += Randomizer.rand(33, 36);
+                                if (improvingMaxMPLevel >= 1) {
+                                    maxmp += improvingMaxMP.getEffect(improvingMaxMPLevel).getY();
+                                }
+                            } else if ((job >= 1300 && job <= 1311) || (job >= 1400 && job <= 1411)) { // Wind Breaker and Night Walker
+                                maxmp += Randomizer.rand(21, 24);
+                            } else if (job >= 2000 && job <= 2112) { // Aran
+                                maxmp += Randomizer.rand(4, 6);
+                            } else { // GameMaster
+                                maxmp += Randomizer.rand(50, 100);
+                            }
+                            maxmp = Math.min(30000, Math.abs(maxmp));
+                            c.getPlayer().setHpApUsed((short) (c.getPlayer().getHpApUsed() + 1));
+                            playerst.setMaxMp(maxmp, c.getPlayer());
+                            statupdate.put(MapleStat.MAXMP, (int) maxmp);
+                            break;
+                    }
+                    switch (apfrom) { // AP from
+                        case 64: { // str
+                            final int toSet = playerst.getStr() - 1;
+                            playerst.setStr((short) toSet, c.getPlayer());
+                            statupdate.put(MapleStat.STR, toSet);
+                            break;
+                        }
+                        case 128: { // dex
+                            final int toSet = playerst.getDex() - 1;
+                            playerst.setDex((short) toSet, c.getPlayer());
+                            statupdate.put(MapleStat.DEX, toSet);
+                            break;
+                        }
+                        case 256: { // int
+                            final int toSet = playerst.getInt() - 1;
+                            playerst.setInt((short) toSet, c.getPlayer());
+                            statupdate.put(MapleStat.INT, toSet);
+                            break;
+                        }
+                        case 512: { // luk
+                            final int toSet = playerst.getLuk() - 1;
+                            playerst.setLuk((short) toSet, c.getPlayer());
+                            statupdate.put(MapleStat.LUK, toSet);
+                            break;
+                        }
+                        case 2048: // HP
+//                            int maxhp = playerst.getMaxHp();
+//                            if (job == 0) { // Beginner
+//                                maxhp -= 12;
+//                            } else if (job >= 100 && job <= 132) { // Warrior
+//                                Skill improvingMaxHP = SkillFactory.getSkill(1000001);
+//                                int improvingMaxHPLevel = c.getPlayer().getSkillLevel(improvingMaxHP);
+//                                maxhp -= 24;
+//                                if (improvingMaxHPLevel >= 1) {
+//                                    maxhp -= improvingMaxHP.getEffect(improvingMaxHPLevel).getY();
+//                                }
+//                            } else if (job >= 200 && job <= 232) { // Magician
+//                                maxhp -= 10;
+//                            } else if (job >= 300 && job <= 322 || job >= 400 && job <= 434) { // Bowman, Thief
+//                                maxhp -= 15;
+//                            } else if ((job >= 500 && job <= 522) || (job >= 1500 && job <= 1522)) { // Warrior
+//                                Skill improvingMaxHP = SkillFactory.getSkill(job / 1000 * 10000000 + 5100000);
+//                                int improvingMaxHPLevel = c.getPlayer().getSkillLevel(improvingMaxHP);
+//                                maxhp -= 20;
+//                                if (improvingMaxHPLevel >= 1) {
+//                                    maxhp -= improvingMaxHP.getEffect(improvingMaxHPLevel).getY();
+//                                }
+//                            }
+//                            c.getPlayer().setHpApUsed((short) (c.getPlayer().getHpApUsed() - 1));
+//                            playerst.setMaxHp(maxhp, c.getPlayer());
+//                            statupdate.put(MapleStat.MAXHP, (int) maxhp);
+                            used = false;
+                            c.getPlayer().dropMessage(1, "피작은 허용되지 않습니다.");
+                            break;
+                        case 8192: // MP
+//                            int maxmp = playerst.getMaxMp();
+//                            if (job == 0) { // Beginner
+//                                maxmp -= 8;
+//                            } else if (job >= 100 && job <= 132) { // Warrior
+//                                maxmp -= 4;
+//                            } else if (job >= 200 && job <= 232) { // Magician
+//                                Skill improvingMaxMP = SkillFactory.getSkill(2000001);
+//                                int improvingMaxMPLevel = c.getPlayer().getSkillLevel(improvingMaxMP);
+//                                maxmp -= 20;
+//                                if (improvingMaxMPLevel >= 1) {
+//                                    maxmp -= improvingMaxMP.getEffect(improvingMaxMPLevel).getY();
+//                                }
+//                            } else if ((job >= 500 && job <= 522) || (job >= 300 && job <= 322) || (job >= 400 && job <= 434)) { // Pirate, Bowman. Thief
+//                                maxmp -= 10;
+//                            }
+//                            c.getPlayer().setHpApUsed((short) (c.getPlayer().getHpApUsed() - 1));
+//                            playerst.setMaxMp(maxmp, c.getPlayer());
+//                            statupdate.put(MapleStat.MAXMP, (int) maxmp);
+//                            break;
+                            used = false;
+                            c.getPlayer().dropMessage(1, "피작은 허용되지 않습니다.");
+                            break;                            
+                    }
+                    c.getSession().write(MaplePacketCreator.updatePlayerStats(statupdate, true, c.getPlayer().getJob()));
+                }
+                break;
+            }
+
+  ...
+
+}
